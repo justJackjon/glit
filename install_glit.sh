@@ -40,6 +40,14 @@ print() {
 
 ask_should_reinstall() {
     print info "\`glit\` is already installed."
+
+    if [[ ! -t 0 ]]; then
+        print info "Running in non-interactive mode. Assuming 'yes' for reinstall."
+        echo ""
+
+        return 0
+    fi
+
     echo ""
     read -p "Do you want to reinstall it? [y/N]: " response
 
