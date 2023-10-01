@@ -4,11 +4,14 @@ determine_platform() {
             BASE_PATH="/Volumes"
             ;;
         Linux)
-            BASE_PATH="/mnt"
+            if [[ "$VOLUME_TYPE" == "removable" ]]; then
+                BASE_PATH="/media/${SUDO_USER:-$USER}"
+            else
+                BASE_PATH="/mnt"
+            fi
             ;;
         *)
             print error "Unsupported platform: $PLATFORM"
-
             exit $EXIT_UNSUPPORTED_PLATFORM
             ;;
     esac
