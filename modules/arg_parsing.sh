@@ -8,17 +8,6 @@ parse_arg() {
     local original_ifs="$IFS"
 
     case "$current_arg" in
-        -V|--volume)
-            if is_missing_value "$next_arg"; then
-                print error "The option $current_arg requires a value."
-
-                exit $EXIT_MISSING_VALUE_FOR_OPTION
-            fi
-
-            VOLUME_NAME="$next_arg"
-
-            return 1  # Indicate that two arguments have been consumed
-            ;;
         -e|--exclude)
             if is_missing_value "$next_arg"; then
                 print error "The option $current_arg requires a value."
@@ -31,11 +20,41 @@ parse_arg() {
 
             return 1  # Indicate that two arguments have been consumed
             ;;
-        -y|--yes)
-            AUTO_CONFIRM=1
-            ;;
         -h|--help)
             display_help
+            ;;
+        -t|--type)
+            if is_missing_value "$next_arg"; then
+                print error "The option $current_arg requires a value."
+
+                exit $EXIT_MISSING_VALUE_FOR_OPTION
+            fi
+
+            if ! [[ "${ACCEPTABLE_TYPE_ARGS[*]}" =~ $next_arg ]]; then
+                local formatted_args=$(echo "${ACCEPTABLE_TYPE_ARGS[@]}" | sed -E "s/([^ ]+)/'\1',/g; s/,\$//")
+
+                print error "Invalid argument for --type option. Acceptable arguments are: $formatted_args."
+
+                exit $EXIT_UNRECOGNIZED_OPTION
+            fi
+
+            VOLUME_TYPE="$next_arg"
+
+            return 1  # Indicate that two arguments have been consumed
+            ;;
+        -V|--volume)
+            if is_missing_value "$next_arg"; then
+                print error "The option $current_arg requires a value."
+
+                exit $EXIT_MISSING_VALUE_FOR_OPTION
+            fi
+
+            VOLUME_NAME="$next_arg"
+
+            return 1  # Indicate that two arguments have been consumed
+            ;;
+        -y|--yes)
+            AUTO_CONFIRM=1
             ;;
         push|pull)
             if [[ -z "$ACTION" ]]; then
