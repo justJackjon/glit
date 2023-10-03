@@ -118,6 +118,7 @@ glit <push|pull> [optional-local-path-to-repo] [OPTIONS]
 
 ### Options
 
+- `-d, --dir`: Specify the path to the mounted volume directory. Default is `/SharedRepos`. The path is relative to the root of the mounted volume.
 - `-e, --exclude`: Comma-separated list of paths to exclude from syncing. Paths should be relative to the repository root. Default exclusions include: `node_modules/`, `.git/`, `bin/`, `obj/`.
 - `-h, --help`: Display the help message and exit.
 - `-t, --type`: Specify the type of mounted volume: 'networked' or 'removable' (e.g., a USB stick). Default is 'networked'.
