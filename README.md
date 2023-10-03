@@ -114,6 +114,8 @@ After installation, use `glit` using the following syntax:
 glit <push|pull> [optional-local-path-to-repo] [OPTIONS]
 ```
 
+If your current working directory is within an initialised git repository, there is no need to supply the optional path after the action argument (either `push` or `pull`). `glit` will attempt to resolve this value automatically by looking for the nearest parent directory which is an initialised git repo.
+
 `glit` offers [detailed summaries of planned changes](#a-glimpse-of-glit-in-action) before performing the synchronisation, allowing users to review and confirm before any changes take place. This functionality helps to safeguard against unwanted changes in either the mounted volume or local directory.
 
 ### Options
