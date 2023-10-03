@@ -148,6 +148,11 @@ Using Removable Media (e.g., a USB stick):
 glit push -V my_usb_stick -t removable
 ```
 
+Specifying the Mounted Volume Directory Path:
+```bash
+glit push -V my_networked_volume --dir /relative/to/root/of/mounted/volume
+```
+
 Pushing Changes When Outside a Git Repo:
 
 ```bash
