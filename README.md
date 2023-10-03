@@ -114,10 +114,13 @@ After installation, use `glit` using the following syntax:
 glit <push|pull> [optional-local-path-to-repo] [OPTIONS]
 ```
 
+If your current working directory is within an initialised git repository, there is no need to supply the optional path after the action argument (either `push` or `pull`). `glit` will attempt to resolve this value automatically by looking for the nearest parent directory which is an initialised git repo.
+
 `glit` offers [detailed summaries of planned changes](#a-glimpse-of-glit-in-action) before performing the synchronisation, allowing users to review and confirm before any changes take place. This functionality helps to safeguard against unwanted changes in either the mounted volume or local directory.
 
 ### Options
 
+- `-d, --dir`: Specify the path to the mounted volume directory. Default is `/SharedRepos`. The path is relative to the root of the mounted volume.
 - `-e, --exclude`: Comma-separated list of paths to exclude from syncing. Paths should be relative to the repository root. Default exclusions include: `node_modules/`, `.git/`, `bin/`, `obj/`.
 - `-h, --help`: Display the help message and exit.
 - `-t, --type`: Specify the type of mounted volume: 'networked' or 'removable' (e.g., a USB stick). Default is 'networked'.
@@ -131,8 +134,8 @@ glit <push|pull> [optional-local-path-to-repo] [OPTIONS]
 Pushing Changes Within a Git Repo:
 
 ```bash
-# NOTE: When the current working directory is within a git repo, `glit` will automatically find
-# the project root:
+# NOTE: When the current working directory is within a git repo, `glit` will automatically
+# find the project root:
 glit push --volume my_networked_volume
 
 # If, when mounting your networked volume you called it `z` (the `glit` default):
@@ -141,8 +144,14 @@ glit push
 
 Using Removable Media (e.g., a USB stick):
 ```bash
-# NOTE: When using 'removable' media, you must specify the `--type` (the default `type` is 'networked'):
+# NOTE: When using 'removable' media, you must specify the `--type`:
+# (default `type` is 'networked')
 glit push -V my_usb_stick -t removable
+```
+
+Specifying the Mounted Volume Directory Path:
+```bash
+glit push -V my_networked_volume --dir /relative/to/root/of/mounted/volume
 ```
 
 Pushing Changes When Outside a Git Repo:
@@ -154,12 +163,12 @@ glit push /path/to/local/repo -V my_networked_volume
 Pushing Changes Excluding Specified Paths:
 
 ```bash
-# NOTE: The .git directory is ignored by default, but needs to be specified if you override the
-# default exclusion list:
+# NOTE: The .git directory is ignored by default, but needs to be specified if you override
+# the default exclusion list:
 glit push --exclude ignore_this,ignore_that,.git
 
-# Assuming none of the following paths are valid from the root of your repo, removes the default
-# exclusion list (not recommended):
+# Assuming none of the following paths are valid from the root of your repo,
+# removes the default exclusion list (not recommended):
 glit push -e none
 glit push -e nothing
 glit push -e foobar
