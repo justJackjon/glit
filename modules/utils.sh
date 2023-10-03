@@ -82,11 +82,21 @@ create_volume_dir_if_not_exists() {
 
     local formatted_mounted_volume=$(echo "$mounted_volume" | sed -E 's/ \(.*\)//')
 
-    if [[ ! -d "$volume_dir" && $ACTION = "push" ]]; then
-        print warning "Volume directory $volume_dir/ is non-existent or inaccessible."
     echo -e "\nMounted Volume: $formatted_mounted_volume"
 
-        prompt_user_and_create_dir "$volume_dir"
+    if [[ ! -d "$volume_dir" ]]; then
+        case "$ACTION" in
+            push)
+                print warning "Volume directory $volume_dir/ is non-existent or inaccessible."
+
+                prompt_user_and_create_dir "$volume_dir"
+                ;;
+            pull)
+                print error "Volume directory $volume_dir/ is non-existent or inaccessible. Please create the directory before proceeding."
+
+                exit $EXIT_VOLUME_NOT_ACCESSIBLE
+                ;;
+        esac
     fi
 
     if [[ ! -w "$volume_dir" ]]; then
