@@ -4,6 +4,7 @@ DEFAULT_EXCLUSIONS=("node_modules/" ".git/" "bin/" "obj/")
 PLATFORM=$(uname)
 ACCEPTABLE_TYPE_ARGS=("networked" "removable")
 VOLUME_TYPE="networked"
+VOLUME_DIR="SharedRepos"
 VOLUME_NAME=""
 ACTION=""
 REPO_PATH=""

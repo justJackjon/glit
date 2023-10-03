@@ -1,5 +1,19 @@
+TWO_ARGS_CONSUMED=1
+ONE_ARG_CONSUMED=0
+
 is_missing_value() {
     [[ -z "$1" || "$1" =~ ^--?[A-Za-z0-9] ]]
+}
+
+check_opt_missing_value() {
+    local current_option="$1"
+    local arg_value="$2"
+
+    if is_missing_value "$arg_value"; then
+        print error "The option $current_option requires a value."
+
+        exit $EXIT_MISSING_VALUE_FOR_OPTION
+    fi
 }
 
 parse_arg() {
@@ -8,17 +22,20 @@ parse_arg() {
     local original_ifs="$IFS"
 
     case "$current_arg" in
-        -e|--exclude)
-            if is_missing_value "$next_arg"; then
-                print error "The option $current_arg requires a value."
+        -d|--dir)
+            check_opt_missing_value "$current_arg" "$next_arg"
 
-                exit $EXIT_MISSING_VALUE_FOR_OPTION
-            fi
+            VOLUME_DIR=$(echo "$next_arg" | sed -E 's@^\./|/$@@; s@/$@@')
+
+            return $TWO_ARGS_CONSUMED
+            ;;
+        -e|--exclude)
+            check_opt_missing_value "$current_arg" "$next_arg"
 
             IFS=',' read -ra EXCLUSIONS <<< "$next_arg"
             IFS="$original_ifs"
 
-            return 1  # Indicate that two arguments have been consumed
+            return $TWO_ARGS_CONSUMED
             ;;
         -h|--help)
             display_help
