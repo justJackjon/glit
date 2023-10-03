@@ -204,6 +204,7 @@ glit pull --yes
 | `6`  | Option is unrecognised.      | Consult the Options section for valid options. |
 | `7`  | User aborted the operation.  | Execute the command again if needed.           |
 | `8`  | Platform is not supported.   | Verify platform support (Linux or MacOS).      |
+| `9`  | Volume is not mounted.       | Mount the specified volume.                    |
 
 ## Troubleshooting
 
