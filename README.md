@@ -134,8 +134,8 @@ If your current working directory is within an initialised git repository, there
 Pushing Changes Within a Git Repo:
 
 ```bash
-# NOTE: When the current working directory is within a git repo, `glit` will automatically find
-# the project root:
+# NOTE: When the current working directory is within a git repo, `glit` will automatically
+# find the project root:
 glit push --volume my_networked_volume
 
 # If, when mounting your networked volume you called it `z` (the `glit` default):
@@ -144,7 +144,8 @@ glit push
 
 Using Removable Media (e.g., a USB stick):
 ```bash
-# NOTE: When using 'removable' media, you must specify the `--type` (the default `type` is 'networked'):
+# NOTE: When using 'removable' media, you must specify the `--type`:
+# (default `type` is 'networked')
 glit push -V my_usb_stick -t removable
 ```
 
@@ -162,12 +163,12 @@ glit push /path/to/local/repo -V my_networked_volume
 Pushing Changes Excluding Specified Paths:
 
 ```bash
-# NOTE: The .git directory is ignored by default, but needs to be specified if you override the
-# default exclusion list:
+# NOTE: The .git directory is ignored by default, but needs to be specified if you override
+# the default exclusion list:
 glit push --exclude ignore_this,ignore_that,.git
 
-# Assuming none of the following paths are valid from the root of your repo, removes the default
-# exclusion list (not recommended):
+# Assuming none of the following paths are valid from the root of your repo,
+# removes the default exclusion list (not recommended):
 glit push -e none
 glit push -e nothing
 glit push -e foobar
