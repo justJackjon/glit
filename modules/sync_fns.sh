@@ -111,7 +111,7 @@ sync_repo() {
 
     check_git_repo "$local_path"
 
-    local volume_path="$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}/SharedRepos/$(basename "$local_path")/"
+    local volume_path="$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}/$VOLUME_DIR/$(basename "$local_path")/"
     local source_path=""
     local target_path=""
 
