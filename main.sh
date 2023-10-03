@@ -10,6 +10,7 @@ EXIT_UNABLE_TO_LOCATE_GIT_REPO=5
 EXIT_UNRECOGNIZED_OPTION=6
 EXIT_ABORTED_BY_USER=7
 EXIT_UNSUPPORTED_PLATFORM=8
+EXIT_VOLUME_NOT_MOUNTED=9
 
 # --- Dependency Checks ---
 
@@ -44,6 +45,10 @@ display_help() {
     echo "repository will be used."
     echo ""
     echo "Options:"
+    echo "  -d, --dir       Specify the path to the mounted volume directory. Default is"
+    echo "                  '$VOLUME_DIR'. The path is relative to the root of the mounted"
+    echo "                  volume."
+    echo ""
     echo "  -e, --exclude   Comma-separated list of paths to exclude from syncing."
     echo "                  Default exclusions are: node_modules/, .git/, bin/, obj/"
     echo "                  Exclusion paths are relative to the root of the repo."
@@ -69,7 +74,7 @@ display_help() {
 parse_args "$@"
 
 determine_platform
-check_volume_access
+create_volume_dir_if_not_exists "$VOLUME_DIR"
 set_repo_path
 generate_exclude_args
 

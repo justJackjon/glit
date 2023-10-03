@@ -46,14 +46,60 @@ set_repo_path() {
     REPO_PATH="$git_root"
 }
 
-check_volume_access() {
-    local volume_dir="$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}/SharedRepos/"
-    
-    if [[ ! -d "$volume_dir" ]]; then
-        print error "Volume $volume_dir is non-existent or inaccessible by user $USER. Verify path and user permissions."
+prompt_user_and_create_dir() {
+    local volume_dir="$1"
 
-        exit $EXIT_VOLUME_NOT_ACCESSIBLE
-    elif [[ ! -w "$volume_dir" ]]; then
+    if [[ $AUTO_CONFIRM -eq 0 ]]; then
+        echo -en "\nWould you like to attempt to create the directory? [y/N]: "
+        read -r user_input
+
+        if [[ ! "$user_input" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+            print error "Aborting operation due to user input."
+
+            exit $EXIT_ABORTED_BY_USER
+        fi
+    fi
+
+    print info "Attempting to create directory '$volume_dir/'..."
+
+    mkdir -p "$volume_dir"
+
+    if [[ $? -eq 0 ]]; then
+        print success "Successfully created directory '$volume_dir/'"
+    fi
+}
+
+create_volume_dir_if_not_exists() {
+    local dir_relpath="$1"
+    local volume_dir="$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}/$dir_relpath"
+    local mounted_volume=$(mount | grep "$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}")
+
+    if [[ -z "$mounted_volume" ]]; then
+        print error "The volume is not mounted. Please ensure the volume is mounted before proceeding."
+
+        exit $EXIT_VOLUME_NOT_MOUNTED
+    fi
+
+    local formatted_mounted_volume=$(echo "$mounted_volume" | sed -E 's/ \(.*\)//')
+
+    echo -e "\nMounted Volume: $formatted_mounted_volume"
+
+    if [[ ! -d "$volume_dir" ]]; then
+        case "$ACTION" in
+            push)
+                print warning "Volume directory $volume_dir/ is non-existent or inaccessible."
+
+                prompt_user_and_create_dir "$volume_dir"
+                ;;
+            pull)
+                print error "Volume directory $volume_dir/ is non-existent or inaccessible. Please create the directory before proceeding."
+
+                exit $EXIT_VOLUME_NOT_ACCESSIBLE
+                ;;
+        esac
+    fi
+
+    if [[ ! -w "$volume_dir" ]]; then
         print error "Write permission denied for user $USER on volume $volume_dir. Check and update permissions."
 
         exit $EXIT_VOLUME_NOT_ACCESSIBLE
