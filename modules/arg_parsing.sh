@@ -37,6 +37,11 @@ parse_arg() {
 
             return $TWO_ARGS_CONSUMED
             ;;
+        -f|--force)
+            FORCE_ACTION=1
+
+            return $ONE_ARG_CONSUMED
+            ;;
         -h|--help)
             display_help
             ;;

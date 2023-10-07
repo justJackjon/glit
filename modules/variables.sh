@@ -1,3 +1,4 @@
+FORCE_ACTION=0
 AUTO_CONFIRM=0
 DEFAULT_VOLUME_NAME="z"
 DEFAULT_EXCLUSIONS=("node_modules/" ".git/" "bin/" "obj/")

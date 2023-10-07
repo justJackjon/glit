@@ -138,17 +138,19 @@ sync_repo() {
 
     IFS=$'\t' read -r source_path target_path < <(get_source_and_target_paths "$local_path")
 
-    rsync --dry-run --itemize-changes "${rsync_common_options[@]}" "$source_path" "$target_path" > "$tempfile" &
+    if [[ $FORCE_ACTION -ne 1 ]]; then
+        rsync --dry-run --itemize-changes "${rsync_common_options[@]}" "$source_path" "$target_path" > "$tempfile" &
 
-    show_spinner "$!" "Checking for changes..." "Finished checking for changes."
+        show_spinner "$!" "Checking for changes..." "Finished checking for changes."
 
-    local dry_run_changelist=$(cat "$tempfile")
-    local discovered_changes=$(get_formatted_changelist "$dry_run_changelist" "$target_path")
+        local dry_run_changelist=$(cat "$tempfile")
+        local discovered_changes=$(get_formatted_changelist "$dry_run_changelist" "$target_path")
 
-    if [[ -z "$discovered_changes" ]]; then
-        print success "No changes detected. Source and destination are in sync."
+        if [[ -z "$discovered_changes" ]]; then
+            print success "No changes detected. Source and destination are in sync."
 
-        exit 0
+            exit 0
+        fi
     fi
 
     prompt_user_for_confirmation "$discovered_changes"
