@@ -33,6 +33,7 @@ source "$DIR/modules/print_fn.sh"
 source "$DIR/modules/arg_parsing.sh"
 source "$DIR/modules/utils.sh"
 source "$DIR/modules/sync_fns.sh"
+source "$DIR/modules/loading_spinner.sh"
 
 # --- Usage Fn ---
 

@@ -111,3 +111,10 @@ generate_exclude_args() {
         EXCLUDE_ARGS+=(--exclude="$exclusion")
     done
 }
+
+mk_autocleaned_tempfile() {
+    local temp_file=$(mktemp)
+
+    trap "rm -f '$temp_file' 2>/dev/null" EXIT ERR INT TERM
+    echo "$temp_file"
+}

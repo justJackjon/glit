@@ -23,15 +23,13 @@ generate_changes_output() {
 }
 
 get_formatted_changelist() {
-    local source_path="$1"
+    local dry_run_changelist="$1"
     local target_path="$2"
 
     local red=$(tput setaf 1)
     local green=$(tput setaf 2)
     local blue=$(tput setaf 4)
     local reset=$(tput sgr0)
-
-    local dry_run_changelist=$(rsync --dry-run --itemize-changes -vrtlDz --delete "${EXCLUDE_ARGS[@]}" "$source_path" "$target_path")
 
     # NOTE: `rsync` Output Prefix Characters:
     # >: The item is being transferred to the remote host (sent).
@@ -133,12 +131,18 @@ get_source_and_target_paths() {
 
 sync_repo() {
     local local_path="$1"
+    local tempfile=$(mk_autocleaned_tempfile)
 
     check_git_repo "$local_path"
 
     IFS=$'\t' read -r source_path target_path < <(get_source_and_target_paths "$local_path")
 
-    local discovered_changes=$(get_formatted_changelist "$source_path" "$target_path")
+    rsync --dry-run --itemize-changes -vrtlDz --delete "${EXCLUDE_ARGS[@]}" "$source_path" "$target_path" > "$tempfile" &
+
+    show_spinner "$!" "Checking for changes..." "Finished checking for changes."
+
+    local dry_run_changelist=$(cat "$tempfile")
+    local discovered_changes=$(get_formatted_changelist "$dry_run_changelist" "$target_path")
 
     if [[ -z "$discovered_changes" ]]; then
         print success "No changes detected. Source and destination are in sync."
