@@ -132,12 +132,13 @@ get_source_and_target_paths() {
 sync_repo() {
     local local_path="$1"
     local tempfile=$(mk_autocleaned_tempfile)
+    local -a rsync_common_options=(-vrtlDz --checksum --delete "${EXCLUDE_ARGS[@]}")
 
     check_git_repo "$local_path"
 
     IFS=$'\t' read -r source_path target_path < <(get_source_and_target_paths "$local_path")
 
-    rsync --dry-run --itemize-changes -vrtlDz --delete "${EXCLUDE_ARGS[@]}" "$source_path" "$target_path" > "$tempfile" &
+    rsync --dry-run --itemize-changes "${rsync_common_options[@]}" "$source_path" "$target_path" > "$tempfile" &
 
     show_spinner "$!" "Checking for changes..." "Finished checking for changes."
 
@@ -152,7 +153,7 @@ sync_repo() {
 
     prompt_user_for_confirmation "$discovered_changes"
 
-    rsync -vrtlDz --delete --progress "${EXCLUDE_ARGS[@]}" "$source_path" "$target_path"
+    rsync --progress "${rsync_common_options[@]}" "$source_path" "$target_path"
 
     if [[ -n "$SUDO_USER" && "$ACTION" == "pull" ]]; then
         change_owner_and_group "$target_path"
