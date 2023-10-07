@@ -33,6 +33,7 @@ source "$DIR/modules/print_fn.sh"
 source "$DIR/modules/arg_parsing.sh"
 source "$DIR/modules/utils.sh"
 source "$DIR/modules/sync_fns.sh"
+source "$DIR/modules/loading_spinner.sh"
 
 # --- Usage Fn ---
 
@@ -49,9 +50,12 @@ display_help() {
     echo "                  '$VOLUME_DIR'. The path is relative to the root of the mounted"
     echo "                  volume."
     echo ""
-    echo "  -e, --exclude   Comma-separated list of paths to exclude from syncing."
-    echo "                  Default exclusions are: node_modules/, .git/, bin/, obj/"
-    echo "                  Exclusion paths are relative to the root of the repo."
+    echo "  -e, --exclude   Comma-separated list of paths to exclude from syncing. Default"
+    echo "                  exclusions are: node_modules/, .git/, bin/, obj/ - exclusion"
+    echo "                  paths are relative to the root of the repo."
+    echo ""
+    echo "  -f, --force     Similar to \`-y\`/\`--yes\`, but instead of outputting the formatted"
+    echo "                  change summary, the sync will be performed immediately."
     echo ""
     echo "  -h, --help      Display this help message and exit."
     echo ""
@@ -63,7 +67,12 @@ display_help() {
     echo "                  locations: For macOS, under \`/Volumes\`. For Linux, use \`/mnt\`"
     echo "                  for networked volumes and \`/media\` for removable volumes."
     echo ""
-    echo "  -y, --yes       Automatically answer 'yes' to the sync confirmation prompt."
+    echo "  -y, --yes       Automatically answer 'yes' to the sync confirmation prompt. Note"
+    echo "                  that this option is ignored if \`-f\`/\`--force\` is also specified."
+    echo "                  This is useful if you still want to see the formtted change"
+    echo "                  summary, but wish to skip the confirmation prompt. This option is"
+    echo "                  slower than \`-f\`/\`--force\` as it requires a dry run to generate"
+    echo "                  the change summary."
     echo ""
 
     exit 0

@@ -1,4 +1,4 @@
-check_git_repo() {
+check_is_git_repo() {
     local path="$1"
 
     if [[ ! -d "$path/.git" ]]; then
@@ -6,6 +6,31 @@ check_git_repo() {
 
         exit $EXIT_NOT_WITHIN_GIT_REPO
     fi
+}
+
+get_source_and_target_paths() {
+    local local_path="$1"
+    local volume_path="$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}/$VOLUME_DIR/$(basename "$local_path")/"
+    local source_path=""
+    local target_path=""
+
+    case "$ACTION" in
+        push)
+            source_path="$local_path/"
+            target_path="$volume_path"
+            ;;
+        pull)
+            source_path="$volume_path"
+            target_path="$local_path/"
+            ;;
+        *)
+            print error "No valid action provided (push or pull). Use -h or --help for usage."
+
+            exit $EXIT_UNRECOGNIZED_OPTION
+            ;;
+    esac
+
+    echo -e "$source_path\t$target_path"
 }
 
 generate_changes_output() {
@@ -23,15 +48,13 @@ generate_changes_output() {
 }
 
 get_formatted_changelist() {
-    local source_path="$1"
+    local dry_run_changelist="$1"
     local target_path="$2"
 
     local red=$(tput setaf 1)
     local green=$(tput setaf 2)
     local blue=$(tput setaf 4)
     local reset=$(tput sgr0)
-
-    local dry_run_changelist=$(rsync --dry-run --itemize-changes -vrtlDz --delete "${EXCLUDE_ARGS[@]}" "$source_path" "$target_path")
 
     # NOTE: `rsync` Output Prefix Characters:
     # >: The item is being transferred to the remote host (sent).
@@ -71,7 +94,24 @@ get_formatted_changelist() {
     echo -e "$combined_changes"
 }
 
-prompt_user_for_confirmation() {
+generate_change_summary() {
+    local source_path="$1"
+    local target_path="$2"
+
+    shift 2; local -a rsync_common_options=("$@")
+    local tempfile=$(mk_autocleaned_tempfile)
+
+    rsync --dry-run --itemize-changes "${rsync_common_options[@]}" "$source_path" "$target_path" > "$tempfile" &
+
+    show_spinner "$!" "Checking for changes..." "Finished checking for changes." > /dev/tty
+
+    local dry_run_changelist=$(cat "$tempfile")
+    local change_summary=$(get_formatted_changelist "$dry_run_changelist" "$target_path")
+
+    echo -e "$change_summary"
+}
+
+output_change_summary_and_prompt() {
     local changelist="$1"
 
     if [[ $AUTO_CONFIRM -eq 1 ]]; then
@@ -108,40 +148,25 @@ change_owner_and_group() {
 
 sync_repo() {
     local local_path="$1"
+    local -a rsync_common_options=(-vrtlDz --checksum --delete "${EXCLUDE_ARGS[@]}")
 
-    check_git_repo "$local_path"
+    check_is_git_repo "$local_path"
 
-    local volume_path="$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}/$VOLUME_DIR/$(basename "$local_path")/"
-    local source_path=""
-    local target_path=""
+    IFS=$'\t' read -r source_path target_path < <(get_source_and_target_paths "$local_path")
 
-    case "$ACTION" in
-        push)
-            source_path="$local_path/"
-            target_path="$volume_path"
-            ;;
-        pull)
-            source_path="$volume_path"
-            target_path="$local_path/"
-            ;;
-        *)
-            print error "No valid action provided (push or pull). Use -h or --help for usage."
+    if [[ $FORCE_ACTION -ne 1 ]]; then
+        local change_summary=$(generate_change_summary "$source_path" "$target_path" "${rsync_common_options[@]}")
 
-            exit $EXIT_UNRECOGNIZED_OPTION
-            ;;
-    esac
+        if [[ -z "$change_summary" ]]; then
+            print success "No changes detected. Source and destination are in sync."
 
-    local discovered_changes=$(get_formatted_changelist "$source_path" "$target_path")
+            exit 0
+        fi
 
-    if [[ -z "$discovered_changes" ]]; then
-        print success "No changes detected. Source and destination are in sync."
-
-        exit 0
+        output_change_summary_and_prompt "$change_summary"
     fi
 
-    prompt_user_for_confirmation "$discovered_changes"
-
-    rsync -vrtlDz --delete --progress "${EXCLUDE_ARGS[@]}" "$source_path" "$target_path"
+    rsync --progress "${rsync_common_options[@]}" "$source_path" "$target_path"
 
     if [[ -n "$SUDO_USER" && "$ACTION" == "pull" ]]; then
         change_owner_and_group "$target_path"
