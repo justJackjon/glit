@@ -106,11 +106,8 @@ change_owner_and_group() {
     chown -R "$SUDO_USER:$sudo_user_group" "$target_path"
 }
 
-sync_repo() {
+get_source_and_target_paths() {
     local local_path="$1"
-
-    check_git_repo "$local_path"
-
     local volume_path="$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}/$VOLUME_DIR/$(basename "$local_path")/"
     local source_path=""
     local target_path=""
@@ -130,6 +127,16 @@ sync_repo() {
             exit $EXIT_UNRECOGNIZED_OPTION
             ;;
     esac
+
+    echo -e "$source_path\t$target_path"
+}
+
+sync_repo() {
+    local local_path="$1"
+
+    check_git_repo "$local_path"
+
+    IFS=$'\t' read -r source_path target_path < <(get_source_and_target_paths "$local_path")
 
     local discovered_changes=$(get_formatted_changelist "$source_path" "$target_path")
 
