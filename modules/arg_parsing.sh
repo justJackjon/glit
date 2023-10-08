@@ -31,7 +31,7 @@ parse_arg() {
         -e|--exclude)
             check_opt_missing_value "$current_arg" "$next_arg"
 
-            IFS=',' read -ra EXCLUSIONS <<< "$next_arg"
+            IFS=',' read -ra EXCLUSIONS < <(echo "$next_arg")
 
             return $TWO_ARGS_CONSUMED
             ;;
