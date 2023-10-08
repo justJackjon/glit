@@ -19,7 +19,6 @@ check_opt_missing_value() {
 parse_arg() {
     local current_arg="$1"
     local next_arg="$2"
-    local original_ifs="$IFS"
 
     case "$current_arg" in
         -d|--dir)
@@ -33,7 +32,6 @@ parse_arg() {
             check_opt_missing_value "$current_arg" "$next_arg"
 
             IFS=',' read -ra EXCLUSIONS <<< "$next_arg"
-            IFS="$original_ifs"
 
             return $TWO_ARGS_CONSUMED
             ;;
