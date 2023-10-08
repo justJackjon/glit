@@ -138,7 +138,7 @@ mv .glit_config.example ~/.glit_config
 
 ## Usage
 
-After installation, use `glit` using the following syntax:
+After installation, you can invoke `glit` using the following syntax:
 
 ```bash
 glit <push|pull> [optional-local-path-to-repo] [OPTIONS]
@@ -146,7 +146,7 @@ glit <push|pull> [optional-local-path-to-repo] [OPTIONS]
 
 If your current working directory is within an initialised git repository, there is no need to supply the optional path after the action argument (either `push` or `pull`). `glit` will attempt to resolve this value automatically by looking for the nearest parent directory which is an initialised git repo.
 
-`glit` offers [detailed summaries of planned changes](#a-glimpse-of-glit-in-action) before performing the synchronisation, allowing users to review and confirm before any changes take place. This functionality helps to safeguard against unwanted changes in either the mounted volume or local directory.
+`glit` provides [detailed summaries of planned changes](#a-glimpse-of-glit-in-action) prior to carrying out the synchronisation. This enables users to review and confirm before any changes are made, helping to safeguard against unintentional modifications to either the mounted volume or the local directory.
 
 ### Options
 
@@ -159,7 +159,7 @@ If your current working directory is within an initialised git repository, there
 
 ## Examples
 
-### :information_source: Check the [Usage](#usage) section for documentation on default settings and behaviour.
+### :information_source: Refer to the [Usage](#usage) section for details on default settings and behaviours.
 
 Pushing Changes Within a Git Repo:
 
