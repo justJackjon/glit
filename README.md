@@ -19,6 +19,7 @@ Other potential [use cases](#use-cases) for `glit` are covered in the relevant s
 - [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
+- [Using Optional Configuration Files](#using-optional-configuration-files)
 - [Usage](#usage)
 - [Examples](#examples)
 - [Modules](#modules)
@@ -106,9 +107,38 @@ If administrative privileges are required:
 sudo bash ./install_glit.sh local
 ```
 
+## Using Optional Configuration Files
+
+`glit` supports optional configuration via `.glit_config` files. These files let you define default settings for `glit`, reducing the cognitive overhead associated with remembering specific CLI options or complex configurations. **Any values supplied as command line arguments will override values within `.glit_config` files.**
+
+### Example `.glit_config` File:
+
+```
+FORCE_ACTION=0
+AUTO_CONFIRM=0
+VOLUME_TYPE="networked"
+VOLUME_DIR="SharedRepos"
+VOLUME_NAME="z"
+EXCLUSIONS=(".git/" "exclude_this/" "exclude_that/")
+```
+
+When `glit` is invoked, it looks for a `.glit_config` file in two locations, in the following order:
+
+1. Within the user's home directory.
+2. At the root of the current git repository.
+
+**If a `.glit_config` file is found in the git repository, its settings will override those defined in the user's home directory.**
+
+An example `.glit_config` file is found in the root of this repository. You can use it as a starting template by moving it to the desired location:
+
+```bash
+# From the root of the `glit` repository, moves the example file to the user's home directory:
+mv .glit_config.example ~/.glit_config
+```
+
 ## Usage
 
-After installation, use `glit` using the following syntax:
+After installation, you can invoke `glit` using the following syntax:
 
 ```bash
 glit <push|pull> [optional-local-path-to-repo] [OPTIONS]
@@ -116,20 +146,21 @@ glit <push|pull> [optional-local-path-to-repo] [OPTIONS]
 
 If your current working directory is within an initialised git repository, there is no need to supply the optional path after the action argument (either `push` or `pull`). `glit` will attempt to resolve this value automatically by looking for the nearest parent directory which is an initialised git repo.
 
-`glit` offers [detailed summaries of planned changes](#a-glimpse-of-glit-in-action) before performing the synchronisation, allowing users to review and confirm before any changes take place. This functionality helps to safeguard against unwanted changes in either the mounted volume or local directory.
+`glit` provides [detailed summaries of planned changes](#a-glimpse-of-glit-in-action) prior to carrying out the synchronisation. This enables users to review and confirm before any changes are made, helping to safeguard against unintentional modifications to either the mounted volume or the local directory.
 
 ### Options
 
 - `-d, --dir`: Specify the path to the mounted volume directory. Default is `/SharedRepos`. The path is relative to the root of the mounted volume.
 - `-e, --exclude`: Comma-separated list of paths to exclude from syncing. Paths should be relative to the repository root. Default exclusions include: `node_modules/`, `.git/`, `bin/`, `obj/`.
+- `-f, --force`: Initiates the sync immediately, foregoing the formatted change summary. This option is a faster alternative to `-y`/`--yes`, which requires a dry run to produce the change summary.
 - `-h, --help`: Display the help message and exit.
 - `-t, --type`: Specify the type of mounted volume: 'networked' or 'removable' (e.g., a USB stick). Default is 'networked'.
 - `-V, --volume`: Specify the name of the mounted volume. Default is '`z`'. Ensure the volume is mounted and writable at the following locations: For macOS, under `/Volumes`. For Linux, use `/mnt` for networked volumes and `/media` for removable volumes.
-- `-y, --yes`: Automatically respond 'yes' to the sync confirmation prompt, applying changes without user confirmation.
+- `-y, --yes`: This option bypasses user confirmation by auto-responding 'yes' to the sync confirmation prompt. However, it still produces the formatted change summary for review after the sync. If `-f`/`--force` is also specified, this option is disregarded.
 
 ## Examples
 
-### :information_source: Check the [Usage](#usage) section for documentation on default settings and behaviour.
+### :information_source: Refer to the [Usage](#usage) section for details on default settings and behaviours.
 
 Pushing Changes Within a Git Repo:
 
@@ -186,6 +217,7 @@ glit pull --yes
 
 - `variables.sh`: Initialises and declares variables utilised throughout the script.
 - `print_fn.sh`: Incorporates functions for formatted console printing.
+- `config_parsing.sh`: Handles the parsing of global and repository-specific `.glit_config` files.
 - `arg_parsing.sh`: Manages argument parsing and validation.
 - `utils.sh`: Incorporates utility functions such as platform determination and volume access check.
 - `sync_fns.sh`: Encompasses functions related to repository synchronisation, change detection, user confirmation, and modification of owner and group of synced items.
