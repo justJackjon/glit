@@ -30,6 +30,7 @@ DIR="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
 
 source "$DIR/modules/variables.sh"
 source "$DIR/modules/print_fn.sh"
+source "$DIR/modules/config_parsing.sh"
 source "$DIR/modules/arg_parsing.sh"
 source "$DIR/modules/utils.sh"
 source "$DIR/modules/sync_fns.sh"
@@ -80,6 +81,7 @@ display_help() {
 
 # --- Main Logic ---
 
+parse_config
 parse_args "$@"
 
 determine_platform

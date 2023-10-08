@@ -19,21 +19,19 @@ check_opt_missing_value() {
 parse_arg() {
     local current_arg="$1"
     local next_arg="$2"
-    local original_ifs="$IFS"
 
     case "$current_arg" in
         -d|--dir)
             check_opt_missing_value "$current_arg" "$next_arg"
 
-            VOLUME_DIR=$(echo "$next_arg" | sed -E 's@^\./|/@@; s@/$@@')
+            VOLUME_DIR=$(strip_path "$next_arg")
 
             return $TWO_ARGS_CONSUMED
             ;;
         -e|--exclude)
             check_opt_missing_value "$current_arg" "$next_arg"
 
-            IFS=',' read -ra EXCLUSIONS <<< "$next_arg"
-            IFS="$original_ifs"
+            IFS=',' read -ra EXCLUSIONS < <(echo "$next_arg")
 
             return $TWO_ARGS_CONSUMED
             ;;
@@ -48,10 +46,11 @@ parse_arg() {
         -t|--type)
             check_opt_missing_value "$current_arg" "$next_arg"
 
-            if ! [[ "${ACCEPTABLE_TYPE_ARGS[*]}" =~ $next_arg ]]; then
-                local formatted_args=$(echo "${ACCEPTABLE_TYPE_ARGS[@]}" | sed -E "s/([^ ]+)/'\1',/g; s/,\$//")
+            if ! [[ " ${ACCEPTABLE_TYPE_ARGS[*]} " =~ " $next_arg " ]]; then
+                # NOTE: Formats the array of acceptable arguments into a comma-separated list
+                local formatted_arg_list=$(echo "${ACCEPTABLE_TYPE_ARGS[@]}" | sed -E "s/([^ ]+)/'\1',/g; s/,\$//")
 
-                print error "Invalid argument for --type option. Acceptable arguments are: $formatted_args."
+                print error "Invalid argument for --type option. Acceptable arguments are: $formatted_arg_list."
 
                 exit $EXIT_UNRECOGNIZED_OPTION
             fi
@@ -63,7 +62,7 @@ parse_arg() {
         -V|--volume)
             check_opt_missing_value "$current_arg" "$next_arg"
 
-            VOLUME_NAME="$next_arg"
+            VOLUME_NAME=$(strip_path "$next_arg")
 
             return $TWO_ARGS_CONSUMED
             ;;

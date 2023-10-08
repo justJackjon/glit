@@ -17,13 +17,15 @@ determine_platform() {
     esac
 }
 
+# NOTE: Supply `1` or `0` for param two, to either exit on error or continue without exiting,
+#       respectively. Defaults to `1` (exit on error).
 get_git_root() {
     local dir="$1"
+    local exit_on_error="${2:-1}"
     local git_root=$(git -C "$dir" rev-parse --show-toplevel 2>/dev/null)
 
-    if [[ $? -ne 0 ]]; then
+    if [[ $? -ne 0 && $exit_on_error -eq 1 ]]; then
         print error "The provided directory ($dir) is not within a git repository."
-
         exit $EXIT_NOT_WITHIN_GIT_REPO
     fi
 
@@ -71,11 +73,12 @@ prompt_user_and_create_dir() {
 
 create_volume_dir_if_not_exists() {
     local dir_relpath="$1"
-    local volume_dir="$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}/$dir_relpath"
-    local mounted_volume=$(mount | grep "$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}")
+    local volume_root="$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}"
+    local volume_dir="$volume_root/$dir_relpath"
+    local mounted_volume=$(mount | grep "$volume_root")
 
     if [[ -z "$mounted_volume" ]]; then
-        print error "The volume is not mounted. Please ensure the volume is mounted before proceeding."
+        print error "Volume \`$volume_root\` is not mounted. Please ensure the volume is mounted before proceeding."
 
         exit $EXIT_VOLUME_NOT_MOUNTED
     fi
@@ -117,4 +120,9 @@ mk_autocleaned_tempfile() {
 
     trap "rm -f '$temp_file' 2>/dev/null" EXIT ERR INT TERM
     echo "$temp_file"
+}
+
+# NOTE: Removes leading `./` or `/` and trailing `/`
+strip_path() {
+    echo "$1" | sed -E 's@^\./|/@@; s@/$@@'
 }
