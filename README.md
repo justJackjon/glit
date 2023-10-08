@@ -217,6 +217,7 @@ glit pull --yes
 
 - `variables.sh`: Initialises and declares variables utilised throughout the script.
 - `print_fn.sh`: Incorporates functions for formatted console printing.
+- `config_parsing.sh`: Handles the parsing of global and repository-specific `.glit_config` files.
 - `arg_parsing.sh`: Manages argument parsing and validation.
 - `utils.sh`: Incorporates utility functions such as platform determination and volume access check.
 - `sync_fns.sh`: Encompasses functions related to repository synchronisation, change detection, user confirmation, and modification of owner and group of synced items.
