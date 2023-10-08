@@ -46,10 +46,11 @@ parse_arg() {
         -t|--type)
             check_opt_missing_value "$current_arg" "$next_arg"
 
-            if ! [[ "${ACCEPTABLE_TYPE_ARGS[*]}" =~ $next_arg ]]; then
-                local formatted_args=$(echo "${ACCEPTABLE_TYPE_ARGS[@]}" | sed -E "s/([^ ]+)/'\1',/g; s/,\$//")
+            if ! [[ " ${ACCEPTABLE_TYPE_ARGS[*]} " =~ " $next_arg " ]]; then
+                # NOTE: Formats the array of acceptable arguments into a comma-separated list
+                local formatted_arg_list=$(echo "${ACCEPTABLE_TYPE_ARGS[@]}" | sed -E "s/([^ ]+)/'\1',/g; s/,\$//")
 
-                print error "Invalid argument for --type option. Acceptable arguments are: $formatted_args."
+                print error "Invalid argument for --type option. Acceptable arguments are: $formatted_arg_list."
 
                 exit $EXIT_UNRECOGNIZED_OPTION
             fi
