@@ -77,7 +77,7 @@ create_volume_dir_if_not_exists() {
     local mounted_volume=$(mount | grep "$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}")
 
     if [[ -z "$mounted_volume" ]]; then
-        print error "The volume is not mounted. Please ensure the volume is mounted before proceeding."
+        print error "Volume \`$volume_dir\` is not mounted. Please ensure the volume is mounted before proceeding."
 
         exit $EXIT_VOLUME_NOT_MOUNTED
     fi
