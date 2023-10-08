@@ -19,6 +19,7 @@ Other potential [use cases](#use-cases) for `glit` are covered in the relevant s
 - [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
+- [Using Optional Configuration Files](#using-optional-configuration-files)
 - [Usage](#usage)
 - [Examples](#examples)
 - [Modules](#modules)
@@ -104,6 +105,35 @@ If administrative privileges are required:
 
 ```bash
 sudo bash ./install_glit.sh local
+```
+
+## Using Optional Configuration Files
+
+`glit` supports optional configuration via `.glit_config` files. These files let you define default settings for `glit`, reducing the cognitive overhead associated with remembering specific CLI options or complex configurations. **Any values supplied as command line arguments will override values within `.glit_config` files.**
+
+### Example `.glit_config` File:
+
+```
+FORCE_ACTION=0
+AUTO_CONFIRM=0
+VOLUME_TYPE="networked"
+VOLUME_DIR="SharedRepos"
+VOLUME_NAME="z"
+EXCLUSIONS=(".git/" "exclude_this/" "exclude_that/")
+```
+
+When `glit` is invoked, it looks for a `.glit_config` file in two locations, in the following order:
+
+1. Within the user's home directory.
+2. At the root of the current git repository.
+
+**If a `.glit_config` file is found in the git repository, its settings will override those defined in the user's home directory.**
+
+An example `.glit_config` file is found in the root of this repository. You can use it as a starting template by moving it to the desired location:
+
+```bash
+# From the root of the `glit` repository, moves the example file to the user's home directory:
+mv .glit_config.example ~/.glit_config
 ```
 
 ## Usage
