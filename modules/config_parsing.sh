@@ -1,4 +1,16 @@
 CONFIG_FILENAME=".glit_config"
+VARS_FOR_PATH_PROCESSING=("VOLUME_DIR" "VOLUME_NAME")
+
+process_paths() {
+    local key="$1"
+    local value="$2"
+
+    if [[ " ${VARS_FOR_PATH_PROCESSING[@]} " =~ " $key " ]]; then
+        value=$(strip_path "$value")
+    fi
+
+    echo "$value"
+}
 
 parse_config_file() {
     local config_file="$1"
@@ -9,9 +21,11 @@ parse_config_file() {
 
     while IFS="=" read -r key value; do
         # NOTE: Removes double quotes from the value if present
-        local processed_value=$(echo "$value" | sed -E 's/^"?([^"]*)"?$/\1/')
+        value=$(echo "$value" | sed -E 's/^"?([^"]*)"?$/\1/')
 
-        if [[ -n $key && -n $processed_value ]]; then
+        local processed_value=$(process_paths "$key" "$value")
+
+        if [[ -n "$key" && -n "$processed_value" ]]; then
             declare -g "$key=$processed_value"
         fi
     done < "$config_file"

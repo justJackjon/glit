@@ -24,7 +24,7 @@ parse_arg() {
         -d|--dir)
             check_opt_missing_value "$current_arg" "$next_arg"
 
-            VOLUME_DIR=$(echo "$next_arg" | sed -E 's@^\./|/@@; s@/$@@')
+            VOLUME_DIR=$(strip_path "$next_arg")
 
             return $TWO_ARGS_CONSUMED
             ;;
@@ -61,7 +61,7 @@ parse_arg() {
         -V|--volume)
             check_opt_missing_value "$current_arg" "$next_arg"
 
-            VOLUME_NAME="$next_arg"
+            VOLUME_NAME=$(strip_path "$next_arg")
 
             return $TWO_ARGS_CONSUMED
             ;;

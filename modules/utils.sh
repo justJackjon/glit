@@ -121,3 +121,8 @@ mk_autocleaned_tempfile() {
     trap "rm -f '$temp_file' 2>/dev/null" EXIT ERR INT TERM
     echo "$temp_file"
 }
+
+# NOTE: Removes leading `./` or `/` and trailing `/`
+strip_path() {
+    echo "$1" | sed -E 's@^\./|/@@; s@/$@@'
+}
