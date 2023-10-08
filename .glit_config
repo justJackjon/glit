@@ -1,6 +1,0 @@
-FORCE_ACTION=0
-AUTO_CONFIRM=0
-VOLUME_TYPE="networked"
-VOLUME_DIR="SharedRepos"
-VOLUME_NAME="z"
-EXCLUSIONS=(".git/" "exclude_this/" "exclude_that/")
