@@ -73,11 +73,12 @@ prompt_user_and_create_dir() {
 
 create_volume_dir_if_not_exists() {
     local dir_relpath="$1"
-    local volume_dir="$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}/$dir_relpath"
-    local mounted_volume=$(mount | grep "$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}")
+    local volume_root="$BASE_PATH/${VOLUME_NAME:-$DEFAULT_VOLUME_NAME}"
+    local volume_dir="$volume_root/$dir_relpath"
+    local mounted_volume=$(mount | grep "$volume_root")
 
     if [[ -z "$mounted_volume" ]]; then
-        print error "Volume \`$volume_dir\` is not mounted. Please ensure the volume is mounted before proceeding."
+        print error "Volume \`$volume_root\` is not mounted. Please ensure the volume is mounted before proceeding."
 
         exit $EXIT_VOLUME_NOT_MOUNTED
     fi
