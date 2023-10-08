@@ -152,10 +152,11 @@ If your current working directory is within an initialised git repository, there
 
 - `-d, --dir`: Specify the path to the mounted volume directory. Default is `/SharedRepos`. The path is relative to the root of the mounted volume.
 - `-e, --exclude`: Comma-separated list of paths to exclude from syncing. Paths should be relative to the repository root. Default exclusions include: `node_modules/`, `.git/`, `bin/`, `obj/`.
+- `-f, --force`: Initiates the sync immediately, foregoing the formatted change summary. This option is a faster alternative to `-y`/`--yes`, which requires a dry run to produce the change summary.
 - `-h, --help`: Display the help message and exit.
 - `-t, --type`: Specify the type of mounted volume: 'networked' or 'removable' (e.g., a USB stick). Default is 'networked'.
 - `-V, --volume`: Specify the name of the mounted volume. Default is '`z`'. Ensure the volume is mounted and writable at the following locations: For macOS, under `/Volumes`. For Linux, use `/mnt` for networked volumes and `/media` for removable volumes.
-- `-y, --yes`: Automatically respond 'yes' to the sync confirmation prompt, applying changes without user confirmation.
+- `-y, --yes`: This option bypasses user confirmation by auto-responding 'yes' to the sync confirmation prompt. However, it still produces the formatted change summary for review after the sync. If `-f`/`--force` is also specified, this option is disregarded.
 
 ## Examples
 
