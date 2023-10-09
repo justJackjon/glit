@@ -94,6 +94,12 @@ parse_args() {
     local skip_current_arg=0
     local total_arguments=${#arguments[@]}
 
+    if (( total_arguments == 0 )); then
+        display_help
+
+        exit $EXIT_NO_ARGS
+    fi
+
     for (( i=0; i<total_arguments; i++ )); do
 
         if (( skip_current_arg )); then
