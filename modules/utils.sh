@@ -126,3 +126,9 @@ mk_autocleaned_tempfile() {
 strip_path() {
     echo "$1" | sed -E 's@^\./|/@@; s@/$@@'
 }
+
+create_comma_separated_list() {
+    local input_array=("$@")
+
+    echo "${input_array[@]}" | sed -E "s/([^ ]+)/'\1',/g; s/,\$//"
+}
