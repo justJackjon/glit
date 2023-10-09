@@ -83,7 +83,7 @@ display_help() {
 # --- Main Logic ---
 
 parse_config
-parse_args "$@"
+parse_args_and_options "$@"
 
 determine_platform
 create_volume_dir_if_not_exists "$VOLUME_DIR"

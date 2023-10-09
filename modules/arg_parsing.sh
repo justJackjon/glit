@@ -1,5 +1,30 @@
-TWO_ARGS_CONSUMED=1
-ONE_ARG_CONSUMED=0
+TWO_VALUES_CONSUMED=1
+ONE_VALUE_CONSUMED=0
+
+is_early_exit_option() {
+    local args_and_options=("$@")
+    local early_return_options=("-h" "--help" "-v" "--version")
+
+    if [[ " ${early_return_options[*]} " =~ " ${args_and_options[0]} " ]]; then
+        return 0
+    fi
+
+    return 1
+}
+
+# NOTE: Usage: glit <push|pull> [optional-local-path-to-repo] [OPTIONS]
+parse_positional_args() {
+    local positional_args=("$@")
+    local total_positional_args=${#positional_args[@]}
+
+    # 1st position
+    ACTION="${positional_args[0]}"
+
+    # 2nd position
+    if (( total_positional_args > 1 )); then
+        REPO_PATH="${positional_args[1]}"
+    fi
+}
 
 is_missing_value() {
     [[ -z "$1" || "$1" =~ ^--?[A-Za-z0-9] ]]
@@ -16,106 +41,120 @@ check_opt_missing_value() {
     fi
 }
 
+validate_volume_type() {
+    local volume_type="$1"
+    local formatted_volume_types=$(create_comma_separated_list "${ACCEPTABLE_TYPE_ARGS[@]}")
+
+    if ! [[ " ${ACCEPTABLE_TYPE_ARGS[*]} " =~ " ${volume_type} " ]]; then
+        print error "Invalid argument for --type option. Acceptable volume types are: $formatted_volume_types."
+
+        exit $EXIT_UNRECOGNIZED_ARGUMENT
+    fi
+}
+
 parse_arg() {
-    local current_arg="$1"
-    local next_arg="$2"
+    local current_value="$1"
+    local next_value="$2"
 
-    case "$current_arg" in
+    case "$current_value" in
         -d|--dir)
-            check_opt_missing_value "$current_arg" "$next_arg"
+            check_opt_missing_value "$current_value" "$next_value"
 
-            VOLUME_DIR=$(strip_path "$next_arg")
+            VOLUME_DIR=$(strip_path "$next_value")
 
-            return $TWO_ARGS_CONSUMED
+            return $TWO_VALUES_CONSUMED
             ;;
         -e|--exclude)
-            check_opt_missing_value "$current_arg" "$next_arg"
+            check_opt_missing_value "$current_value" "$next_value"
 
-            IFS=',' read -ra EXCLUSIONS < <(echo "$next_arg")
+            IFS=',' read -ra EXCLUSIONS < <(echo "$next_value")
 
-            return $TWO_ARGS_CONSUMED
+            return $TWO_VALUES_CONSUMED
             ;;
         -f|--force)
             FORCE_ACTION=1
 
-            return $ONE_ARG_CONSUMED
+            return $ONE_VALUE_CONSUMED
             ;;
         -h|--help)
             display_help
+
+            # NOTE: display_help will exit, so we don't need to do anything else here.
             ;;
         -t|--type)
-            check_opt_missing_value "$current_arg" "$next_arg"
+            check_opt_missing_value "$current_value" "$next_value"
 
-            if ! [[ " ${ACCEPTABLE_TYPE_ARGS[*]} " =~ " $next_arg " ]]; then
-                # NOTE: Formats the array of acceptable arguments into a comma-separated list
-                local formatted_arg_list=$(echo "${ACCEPTABLE_TYPE_ARGS[@]}" | sed -E "s/([^ ]+)/'\1',/g; s/,\$//")
+            validate_volume_type "$next_value"
 
-                print error "Invalid argument for --type option. Acceptable arguments are: $formatted_arg_list."
+            VOLUME_TYPE="$next_value"
 
-                exit $EXIT_UNRECOGNIZED_OPTION
-            fi
-
-            VOLUME_TYPE="$next_arg"
-
-            return $TWO_ARGS_CONSUMED
+            return $TWO_VALUES_CONSUMED
             ;;
         -V|--volume)
-            check_opt_missing_value "$current_arg" "$next_arg"
+            check_opt_missing_value "$current_value" "$next_value"
 
-            VOLUME_NAME=$(strip_path "$next_arg")
+            VOLUME_NAME=$(strip_path "$next_value")
 
-            return $TWO_ARGS_CONSUMED
+            return $TWO_VALUES_CONSUMED
             ;;
         -y|--yes)
             AUTO_CONFIRM=1
+
+            return $ONE_VALUE_CONSUMED
             ;;
-        push|pull)
-            if [[ -z "$ACTION" ]]; then
-                ACTION="$current_arg"
-            fi
-            ;;
-        -*)
-            print error "Unrecognised option: $current_arg"
+        *)
+            print error "Unrecognised option: $current_value"
 
             exit $EXIT_UNRECOGNIZED_OPTION
             ;;
-        *)
-            if [[ -z "$REPO_PATH" ]]; then
-                REPO_PATH="$current_arg"
-            fi
-            ;;
     esac
 
-    return $ONE_ARG_CONSUMED
+    return $ONE_VALUE_CONSUMED
 }
 
-parse_args() {
-    local arguments=("$@")
-    local skip_current_arg=0
-    local total_arguments=${#arguments[@]}
+parse_options() {
+    local options=("$@")
+    local total_options=${#options[@]}
+    local skip_current_value=0
 
-    if (( total_arguments == 0 )); then
-        display_help
+    for (( i=0; i<total_options; i++ )); do
 
-        exit $EXIT_NO_ARGS
-    fi
+        if (( skip_current_value )); then
+            skip_current_value=0
 
-    for (( i=0; i<total_arguments; i++ )); do
-
-        if (( skip_current_arg )); then
-            skip_current_arg=0
             continue
         fi
 
-        local current_arg="${arguments[$i]}"
-        local next_arg="${arguments[$((i+1))]:-}"
+        local current_value="${options[$i]}"
+        local next_value="${options[$((i+1))]:-}"
 
-        if (( i+1 < total_arguments )); then
-            parse_arg "$current_arg" "$next_arg"
-            skip_current_arg=$?  # 0 if only one argument was consumed, 1 if two arguments were consumed
+        if (( i+1 < total_options )); then
+            parse_arg "$current_value" "$next_value"
+            skip_current_value=$?  # 0 if only one value was consumed, 1 if two value were consumed
         else
-            parse_arg "$current_arg"
+            parse_arg "$current_value"
         fi
 
     done
+}
+
+parse_args_and_options() {
+    local args_and_options=("$@")
+    local total_args_and_options=${#args_and_options[@]}
+
+    if (( total_args_and_options == 0 )); then
+        display_help
+    fi
+
+    # NOTE: This logic relies (correctly) on all positional arguments appearing before any options.
+    # Should this change in the future, this logic will need to be updated.
+    local positional_args=($(echo "$@" | tr ' ' '\n' | sed -n '/^-/q;p' | tr '\n' ' '))
+    local total_positional_args=${#positional_args[@]}
+    local options=("${args_and_options[@]:$total_positional_args}")
+
+    if ! is_early_exit_option "${args_and_options[@]}"; then
+        parse_positional_args "${positional_args[@]}"
+    fi
+
+    parse_options "${options[@]}"
 }
