@@ -26,10 +26,17 @@ get_git_root() {
 
     if [[ $? -ne 0 && $exit_on_error -eq 1 ]]; then
         print error "The provided directory ($dir) is not within a git repository."
+
         exit $EXIT_NOT_WITHIN_GIT_REPO
     fi
 
     echo "$git_root"
+}
+
+is_git_repo() {
+    local git_root=$(get_git_root "$1" 0)
+
+    test -n "$git_root"
 }
 
 set_repo_path() {

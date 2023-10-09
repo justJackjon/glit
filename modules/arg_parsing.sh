@@ -12,6 +12,31 @@ is_early_exit_option() {
     return 1
 }
 
+validate_positional_args() {
+    local positional_args=("$@")
+    local total_positional_args=${#positional_args[@]}
+    local formatted_arg_list=$(create_comma_separated_list "${ACCEPTABLE_ACTION_ARGS[@]}")
+    local action_arg="${positional_args[0]}"
+
+    if (( total_positional_args == 0 )); then
+        print error "Missing action argument. Acceptable actions are: $formatted_arg_list."
+
+        exit $EXIT_MANDATORY_ARGUMENT_MISSING
+    fi
+
+    if ! [[ " ${ACCEPTABLE_ACTION_ARGS[*]} " =~ " ${action_arg} " ]]; then
+        print error "Invalid action argument. Acceptable actions are: $formatted_arg_list."
+
+        exit $EXIT_UNRECOGNIZED_ARGUMENT
+    fi
+
+    if (( total_positional_args > 1 )) && ! is_git_repo "${positional_args[1]}"; then
+        print error "The path \`${positional_args[1]}\` is not a valid git repository."
+
+        exit $EXIT_UNABLE_TO_LOCATE_GIT_REPO
+    fi
+}
+
 # NOTE: Usage: glit <push|pull> [optional-local-path-to-repo] [OPTIONS]
 parse_positional_args() {
     local positional_args=("$@")
@@ -153,6 +178,7 @@ parse_args_and_options() {
     local options=("${args_and_options[@]:$total_positional_args}")
 
     if ! is_early_exit_option "${args_and_options[@]}"; then
+        validate_positional_args "${positional_args[@]}"
         parse_positional_args "${positional_args[@]}"
     fi
 
