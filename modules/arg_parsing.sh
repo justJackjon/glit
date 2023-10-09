@@ -134,7 +134,10 @@ parse_arg() {
             ;;
     esac
 
-    return $ONE_VALUE_CONSUMED
+    # NOTE: If we've gotten to this point, something very bad has happened.
+    print error "Unrecognised option: $current_value"
+
+    exit $EXIT_UNRECOGNIZED_OPTION
 }
 
 parse_options() {
