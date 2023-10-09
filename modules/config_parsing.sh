@@ -20,6 +20,11 @@ parse_config_file() {
     fi
 
     while IFS="=" read -r key value; do
+        # NOTE: Skip commented lines (lines starting with #)
+        if [[ "$key" =~ ^[[:space:]]*# ]]; then
+            continue
+        fi
+
         # NOTE: Removes double quotes from the value if present
         value=$(echo "$value" | sed -E 's/^"?([^"]*)"?$/\1/')
 

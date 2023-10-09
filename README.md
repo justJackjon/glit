@@ -114,11 +114,26 @@ sudo bash ./install_glit.sh local
 ### Example `.glit_config` File:
 
 ```
+# NOTE: This is an example `.glit_config` file with default configurations for `glit`.
+# Each configuration item corresponds to a matching command line argument. For detailed explanations of these options,
+# please refer to the 'Usage' section in the README.
+
+# Whether to initiate the sync immediately, foregoing the change summary. 0 = No, 1 = Yes.
 FORCE_ACTION=0
+
+# Whether to auto-respond 'yes' to the sync confirmation prompt. 0 = No, 1 = Yes. Ignored if FORCE_ACTION is set to 1.
 AUTO_CONFIRM=0
+
+# Type of mounted volume: 'networked' or 'removable'.
 VOLUME_TYPE="networked"
+
+# Name of, or path to, the mounted volume directory, relative to the volume's root.
 VOLUME_DIR="SharedRepos"
+
+# Name of the mounted volume.
 VOLUME_NAME="z"
+
+# Array of paths to exclude from syncing. Paths are relative to the repo root.
 EXCLUSIONS=(".git/" "exclude_this/" "exclude_that/")
 ```
 
