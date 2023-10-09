@@ -97,12 +97,12 @@ create_volume_dir_if_not_exists() {
     if [[ ! -d "$volume_dir" ]]; then
         case "$ACTION" in
             push)
-                print warning "Volume directory $volume_dir/ is non-existent or inaccessible."
+                print warning "Volume directory $volume_dir/ is non-existent or inaccessible for user \`$USER\`."
 
                 prompt_user_and_create_dir "$volume_dir"
                 ;;
             pull)
-                print error "Volume directory $volume_dir/ is non-existent or inaccessible. Please create the directory before proceeding."
+                print error "Volume directory $volume_dir/ is non-existent or inaccessible for user \`$USER\`. Please create the directory before proceeding."
 
                 exit $EXIT_VOLUME_NOT_ACCESSIBLE
                 ;;
@@ -110,7 +110,7 @@ create_volume_dir_if_not_exists() {
     fi
 
     if [[ ! -w "$volume_dir" ]]; then
-        print error "Write permission denied for user $USER on volume $volume_dir. Check and update permissions."
+        print error "Write permission denied for user \`$USER\` on volume $volume_dir. Check and update permissions."
 
         exit $EXIT_VOLUME_NOT_ACCESSIBLE
     fi
