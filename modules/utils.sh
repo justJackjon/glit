@@ -17,8 +17,8 @@ determine_platform() {
     esac
 }
 
-# NOTE: Supply `1` or `0` for param two, to either exit on error or continue without exiting,
-#       respectively. Defaults to `1` (exit on error).
+# NOTE: Supply `1` or `0` for the second parameter, to either exit on error or continue without exiting, respectively.
+#       Defaults to `1` (exit on error).
 get_git_root() {
     local dir="$1"
     local exit_on_error="${2:-1}"
