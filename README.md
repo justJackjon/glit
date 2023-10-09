@@ -226,18 +226,19 @@ glit pull --yes
 
 `glit` uses the following non-zero exit codes to indicate that the outcome of the intended operation was unsuccessful. Should you encounter any of these exit codes, the following possible solutions are proposed:
 
-| Code | Description                  | Possible Solution                                          |
-| ---- | ---------------------------- | -----------------------------------------------------------|
-| `1`  | Dependencies are missing.    | Install all prerequisites.                                 |
-| `2`  | Volume is not accessible.    | Ensure the volume is mounted and writable.                 |
-| `3`  | Not within a git repository. | Navigate to a git repository.                              |
-| `4`  | Option requires a value.     | Provide the necessary value for the option.                |
-| `5`  | Git repository not found.    | Verify the correctness of the repository path.             |
-| `6`  | Option is unrecognised.      | Consult the [options section](#options) for valid options. |
-| `7`  | User aborted the operation.  | Execute the command again if needed.                       |
-| `8`  | Platform is not supported.   | Verify platform support (Linux or MacOS).                  |
-| `9`  | Volume is not mounted.       | Mount the specified volume.                                |
-| `10` | No arguments provided.       | Consult the [options section](#options) for valid usage.   |
+| Code | Description                  | Possible Solution                                                |
+| ---- | ---------------------------- | -----------------------------------------------------------------|
+| `1`  | Dependencies are missing.    | Install all prerequisites.                                       |
+| `2`  | Volume is not accessible.    | Ensure the volume is mounted and writable.                       |
+| `3`  | Not within a git repository. | Navigate to a git repository.                                    |
+| `4`  | Option requires a value.     | Provide the necessary value for the option.                      |
+| `5`  | Git repository not found.    | Verify the correctness of the repository path.                   |
+| `6`  | Option is unrecognised.      | Consult the [options section](#options) for valid options.       |
+| `7`  | User aborted the operation.  | Execute the command again if needed.                             |
+| `8`  | Platform is not supported.   | Verify platform support (Linux or MacOS).                        |
+| `9`  | Volume is not mounted.       | Mount the specified volume.                                      |
+| `10` | Mandatory argument missing.  | Consult the [options section](#options) for mandatory arguments. |
+| `11` | Argument is unrecognised.    | Consult the [options section](#options) for valid arguments.     |
 
 ## Troubleshooting
 
