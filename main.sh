@@ -11,6 +11,8 @@ EXIT_UNRECOGNIZED_OPTION=6
 EXIT_ABORTED_BY_USER=7
 EXIT_UNSUPPORTED_PLATFORM=8
 EXIT_VOLUME_NOT_MOUNTED=9
+EXIT_MANDATORY_ARGUMENT_MISSING=10
+EXIT_UNRECOGNIZED_ARGUMENT=11
 
 # --- Dependency Checks ---
 
@@ -82,7 +84,7 @@ display_help() {
 # --- Main Logic ---
 
 parse_config
-parse_args "$@"
+parse_args_and_options "$@"
 
 determine_platform
 create_volume_dir_if_not_exists "$VOLUME_DIR"

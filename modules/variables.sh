@@ -3,6 +3,7 @@ AUTO_CONFIRM=0
 DEFAULT_VOLUME_NAME="z"
 DEFAULT_EXCLUSIONS=("node_modules/" ".git/" "bin/" "obj/")
 PLATFORM=$(uname)
+ACCEPTABLE_ACTION_ARGS=("push" "pull")
 ACCEPTABLE_TYPE_ARGS=("networked" "removable")
 VOLUME_TYPE="networked"
 VOLUME_DIR="SharedRepos"
