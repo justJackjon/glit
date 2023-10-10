@@ -70,7 +70,7 @@ It is important to recognise that every developer has their own unique workflow,
 
 ## Installation
 
-To install `glit`, execute the `install_glit.sh` script. The script offers two installation modes. Note that `sudo` or administrative privileges may be necessary for installation.
+To install `glit`, execute the `install_glit.sh` script. The script offers various installation modes. Note that `sudo` or administrative privileges may be necessary for installation.
 
 The installation script will:
 
@@ -82,7 +82,16 @@ The installation script will:
 - Generate a symlink to the main `glit` script in `/usr/local/bin/glit`.
 - Assign the necessary permissions.
 
-### Default Installation
+### Installation Options
+
+- **`remote`**: Fetch and install `glit` from the remote GitHub repository. This is the default mode.
+- **`local`**: Install `glit` from a local directory. Defaults to the parent of the current directory, however a path can be specified after the `local` keyword.
+- **`-v, --version`**: Specify a version of `glit` to install in the `remote` mode. Accepts a version identifier like `v1.2.3`.
+- **`-u, --unattended`**: Enables unattended installation. In this mode, the script will bypass any prompts.
+
+### Installation Examples
+
+#### Default Installation
 
 To perform the default installation, retrieve the installation script from the remote repository and execute it with bash. Administrative privileges may be necessary, and if so, prefix the command with `sudo`. Whilst this is the easiest way to get started with `glit`, please heed the security warning below.
 
@@ -90,10 +99,29 @@ To perform the default installation, retrieve the installation script from the r
 
 ```bash
 # WARNING: The following code retrieves a remote script and pipes it into sudo bash.
+# NOTE: This will install the latest version from GitHub.
 curl -sSL https://raw.githubusercontent.com/justjackjon/glit/main/install_glit.sh | sudo bash
 ```
 
-### Local Installation
+#### Specific Version Installation
+
+If you want to install a specific version of `glit`, you can do so by specifying the version using the `-v` or `--version` flags.
+
+```bash
+# NOTE: Replace `vX.X.X` with the desired version, e.g., `v1.2.3`.
+curl -sSL https://raw.githubusercontent.com/justjackjon/glit/main/install_glit.sh | sudo bash -s -- -v vX.X.X
+```
+
+#### Unattended Installation
+
+For unattended installations (e.g., as part of an automation or CI/CD process), you can use the `-u` or `--unattended` flags. This will bypass any prompts.
+
+```bash
+# NOTE: Replace `vX.X.X` with the desired version, e.g., `v1.2.3`.
+curl -sSL https://raw.githubusercontent.com/justjackjon/glit/main/install_glit.sh | sudo bash -s -- -u -v vX.X.X
+```
+
+#### Local Installation
 
 If the repository has already been cloned locally, execute the installation script from the root of the repository:
 

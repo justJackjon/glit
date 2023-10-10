@@ -3,14 +3,64 @@
 # Instruct bash to immediately exit if any command has a non-zero exit status
 set -e
 
-# Retrieve installation mode and local path from command line arguments or use default values
-INSTALL_MODE="$1"
-LOCAL_PATH="${2:-$(dirname "$(pwd)")}"
+# Default values
+INSTALL_MODE="remote"
+LOCAL_PATH="$(dirname "$(pwd)")"
+VERSION="latest"
+UNATTENDED=false
 
+# Argument parsing
+while (( "$#" )); do
+  case "$1" in
+    local)
+      INSTALL_MODE="local"
+      shift
+      ;;
+    remote)
+      INSTALL_MODE="remote"
+      shift
+      ;;
+    -v|--version)
+      VERSION="$2"
+      shift 2
+      ;;
+    -u|--unattended)
+      UNATTENDED=true
+      shift
+      ;;
+    *)
+      LOCAL_PATH="$1"
+      shift
+      ;;
+  esac
+done
+
+GH_API_ENDPOINT="https://api.github.com/repos/justJackjon/glit"
 GLIT_REPO_URL="https://github.com/justJackjon/glit"
 GLIT_DIR="/opt/glit"
 SYMLINK_PATH="/usr/local/bin/glit"
 DEPENDENCIES=("curl" "git" "rsync" "uname" "realpath")
+
+if [[ "$INSTALL_MODE" == "remote" ]]; then
+    TEMP_DIR=$(mktemp -d)
+fi
+
+# Quick sanity check on the following variables as we rm -rf them later.
+if [[ "$GLIT_DIR" == "/" ]] || [[ "$TEMP_DIR" == "/" ]]; then
+    echo -e "\nInvalid value for GLIT_DIR or TEMP_DIR. Aborting."
+
+    exit 1
+fi
+
+cleanup() {
+    echo -e "\n\nInstallation aborted. Cleaning up temporary files..."
+    rm -rf "$TEMP_DIR"
+
+    exit 1
+}
+
+# NOTE: Only trap on ERR, INT and TERM signals. TEMP_DIR is explicitly removed on successful EXIT.
+trap cleanup ERR INT TERM
 
 HEAVY_CHECK_MARK="\u2714"
 RED="\e[31m"
@@ -41,9 +91,8 @@ print() {
 ask_should_reinstall() {
     print info "\`glit\` is already installed."
 
-    if [[ ! -t 0 ]]; then
+    if $UNATTENDED || [[ ! -t 0 ]]; then
         print info "Running in non-interactive mode. Assuming 'yes' for reinstall."
-        echo ""
 
         return 0
     fi
@@ -97,7 +146,31 @@ if [[ "$INSTALL_MODE" == "local" ]]; then
 
     cp -r "$LOCAL_PATH/glit" "$GLIT_DIR"
 else
-    git clone "$GLIT_REPO_URL" "$GLIT_DIR"
+    # NOTE: Using grep and sed to parse JSON so we don't add a dependency on `jq`
+    if [[ "$VERSION" == "latest" ]]; then
+        RELEASE_URL=$(curl -s "$GH_API_ENDPOINT/releases/latest" | grep tarball_url | sed 's/.*: "\(.*\)",/\1/')
+    else
+        RELEASE_URL=$(curl -s "$GH_API_ENDPOINT/releases/tags/$VERSION" | grep tarball_url | sed 's/.*: "\(.*\)",/\1/')
+    fi
+
+    # Check if RELEASE_URL is empty, which might be due to an invalid or non-existent tag
+    if [[ -z "$RELEASE_URL" ]]; then
+        print error "Failed to retrieve the release URL for version '$VERSION'. Please ensure the provided version exists."
+
+        exit 1
+    fi
+
+    print info "Downloading \`glit\` from $RELEASE_URL...\n"
+
+    curl -L "$RELEASE_URL" -o "$TEMP_DIR/glit.tar.gz"
+    tar -xzf "$TEMP_DIR/glit.tar.gz" -C "$TEMP_DIR"
+
+    mv $TEMP_DIR/justJackjon-glit-* "$GLIT_DIR"
+
+    # NOTE: The cleanup trap will remove temp files on ERR, INT and TERM signals, but not on [successful] EXIT.
+    rm -rf "$TEMP_DIR"
+
+    print success "Temporary files have been cleaned up"
 fi
 
 # Create a symlink to the main `glit` script
