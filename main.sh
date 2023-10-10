@@ -65,6 +65,8 @@ display_help() {
     echo "  -t, --type      Specify the type of mounted volume: 'networked' or 'removable'."
     echo "                  Default is 'networked'."
     echo ""
+    echo "  -v, --version   Display version information and exit."
+    echo ""
     echo "  -V, --volume    Specify the name of the mounted volume. Default is '$DEFAULT_VOLUME_NAME'."
     echo "                  Ensure the volume is mounted and writable at the following"
     echo "                  locations: For macOS, under \`/Volumes\`. For Linux, use \`/mnt\`"
