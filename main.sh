@@ -87,7 +87,7 @@ display_version() {
     echo ""
     echo -e "\e[1m\`glit\` $VERSION\e[0m"
     echo ""
-    echo "Release Date: October 10, 2023"
+    echo "Release Date: $RELEASE_DATE"
     echo ""
     echo "License: MIT"
     echo -e "Website: \e]8;;https://github.com/justJackjon/glit\ahttps://github.com/justJackjon/glit\e]8;;\a"
