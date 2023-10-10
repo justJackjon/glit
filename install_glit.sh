@@ -146,6 +146,13 @@ else
         RELEASE_URL=$(curl -s "$GH_API_ENDPOINT/releases/tags/$VERSION" | grep tarball_url | sed 's/.*: "\(.*\)",/\1/')
     fi
 
+    # Check if RELEASE_URL is empty, which might be due to an invalid or non-existent tag
+    if [[ -z "$RELEASE_URL" ]]; then
+        print error "Failed to retrieve the release URL for version '$VERSION'. Please ensure the provided version exists."
+
+        exit 1
+    fi
+
     print info "Downloading \`glit\` from $RELEASE_URL...\n"
 
     curl -L "$RELEASE_URL" -o "$TEMP_DIR/glit.tar.gz"
