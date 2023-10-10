@@ -1,5 +1,5 @@
-TWO_VALUES_CONSUMED=1
-ONE_VALUE_CONSUMED=0
+ONE_VALUE_CONSUMED=1
+TWO_VALUES_CONSUMED=2
 
 is_early_exit_option() {
     local args_and_options=("$@")
@@ -77,92 +77,69 @@ validate_volume_type() {
     fi
 }
 
-parse_arg() {
-    local current_value="$1"
-    local next_value="$2"
-
-    case "$current_value" in
-        -d|--dir)
-            check_opt_missing_value "$current_value" "$next_value"
-
-            VOLUME_DIR=$(strip_path "$next_value")
-
-            return $TWO_VALUES_CONSUMED
-            ;;
-        -e|--exclude)
-            check_opt_missing_value "$current_value" "$next_value"
-
-            IFS=',' read -ra EXCLUSIONS < <(echo "$next_value")
-
-            return $TWO_VALUES_CONSUMED
-            ;;
-        -f|--force)
-            FORCE_ACTION=1
-
-            return $ONE_VALUE_CONSUMED
-            ;;
-        -h|--help)
-            display_help
-
-            # NOTE: display_help will exit, so we don't need to do anything else here.
-            ;;
-        -t|--type)
-            check_opt_missing_value "$current_value" "$next_value"
-
-            validate_volume_type "$next_value"
-
-            VOLUME_TYPE="$next_value"
-
-            return $TWO_VALUES_CONSUMED
-            ;;
-        -V|--volume)
-            check_opt_missing_value "$current_value" "$next_value"
-
-            VOLUME_NAME=$(strip_path "$next_value")
-
-            return $TWO_VALUES_CONSUMED
-            ;;
-        -y|--yes)
-            AUTO_CONFIRM=1
-
-            return $ONE_VALUE_CONSUMED
-            ;;
-        *)
-            print error "Unrecognised option: $current_value"
-
-            exit $EXIT_UNRECOGNIZED_OPTION
-            ;;
-    esac
-
-    # NOTE: If we've gotten to this point, something very bad has happened.
-    print error "Unrecognised option: $current_value"
-
-    exit $EXIT_UNRECOGNIZED_OPTION
-}
-
 parse_options() {
-    local options=("$@")
-    local total_options=${#options[@]}
-    local skip_current_value=0
+    local values_remaining="$#"
+    local current_value=""
+    local next_value=""
 
-    for (( i=0; i<total_options; i++ )); do
+    while (( "$values_remaining" )); do
+      current_value="$1"
+      next_value="$2"
 
-        if (( skip_current_value )); then
-            skip_current_value=0
+      case "$current_value" in
+          -d|--dir)
+              check_opt_missing_value "$current_value" "$next_value"
 
-            continue
-        fi
+              VOLUME_DIR=$(strip_path "$next_value")
 
-        local current_value="${options[$i]}"
-        local next_value="${options[$((i+1))]:-}"
+              shift $TWO_VALUES_CONSUMED
+              ;;
+          -e|--exclude)
+              check_opt_missing_value "$current_value" "$next_value"
 
-        if (( i+1 < total_options )); then
-            parse_arg "$current_value" "$next_value"
-            skip_current_value=$?  # 0 if only one value was consumed, 1 if two value were consumed
-        else
-            parse_arg "$current_value"
-        fi
+              IFS=',' read -ra EXCLUSIONS < <(echo "$next_value")
 
+              shift $TWO_VALUES_CONSUMED
+              ;;
+          -f|--force)
+              FORCE_ACTION=1
+
+              shift $ONE_VALUE_CONSUMED
+              ;;
+          -h|--help)
+              display_help
+
+              # NOTE: display_help will exit, so we don't need to do anything else here.
+              ;;
+          -t|--type)
+              check_opt_missing_value "$current_value" "$next_value"
+
+              validate_volume_type "$next_value"
+
+              VOLUME_TYPE="$next_value"
+
+              shift $TWO_VALUES_CONSUMED
+              ;;
+          -V|--volume)
+              check_opt_missing_value "$current_value" "$next_value"
+
+              VOLUME_NAME=$(strip_path "$next_value")
+
+              shift $TWO_VALUES_CONSUMED
+              ;;
+          -y|--yes)
+              AUTO_CONFIRM=1
+
+              shift $ONE_VALUE_CONSUMED
+              ;;
+          *)
+              print error "Unrecognised option: $current_value"
+
+              exit $EXIT_UNRECOGNIZED_OPTION
+              ;;
+      esac
+
+      values_remaining="$#"
     done
 }
 
