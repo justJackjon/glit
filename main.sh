@@ -38,7 +38,7 @@ source "$DIR/modules/utils.sh"
 source "$DIR/modules/sync_fns.sh"
 source "$DIR/modules/loading_spinner.sh"
 
-# --- Usage Fn ---
+# --- Display Info Fns ---
 
 display_help() {
     echo ""
@@ -65,6 +65,8 @@ display_help() {
     echo "  -t, --type      Specify the type of mounted volume: 'networked' or 'removable'."
     echo "                  Default is 'networked'."
     echo ""
+    echo "  -v, --version   Display version information and exit."
+    echo ""
     echo "  -V, --volume    Specify the name of the mounted volume. Default is '$DEFAULT_VOLUME_NAME'."
     echo "                  Ensure the volume is mounted and writable at the following"
     echo "                  locations: For macOS, under \`/Volumes\`. For Linux, use \`/mnt\`"
@@ -76,6 +78,24 @@ display_help() {
     echo "                  summary, but wish to skip the confirmation prompt. This option is"
     echo "                  slower than \`-f\`/\`--force\` as it requires a dry run to generate"
     echo "                  the change summary."
+    echo ""
+
+    exit 0
+}
+
+display_version() {
+    echo ""
+    echo -e "\e[1m\`glit\` $VERSION\e[0m"
+    echo ""
+    echo "Release Date: $RELEASE_DATE"
+    echo ""
+    echo "License: MIT"
+    echo -e "Website: \e]8;;https://github.com/justJackjon/glit\ahttps://github.com/justJackjon/glit\e]8;;\a"
+    echo -e "Contact: \e]8;;https://github.com/justJackjon/glit/issues\ahttps://github.com/justJackjon/glit/issues\e]8;;\a"
+    echo ""
+    echo "About:"
+    echo "\`glit\` is a user-friendly wrapper around \`rsync\`, designed to assist in synchronising"
+    echo "git repositories with mounted volumes such as networked drives or removable media."
     echo ""
 
     exit 0

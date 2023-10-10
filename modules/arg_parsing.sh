@@ -120,6 +120,11 @@ parse_options() {
 
               shift $TWO_VALUES_CONSUMED
               ;;
+          -v|--version)
+              display_version
+
+              # NOTE: display_version will exit, so we don't need to do anything else here.
+              ;;
           -V|--volume)
               check_opt_missing_value "$current_value" "$next_value"
 
