@@ -45,6 +45,13 @@ if [[ "$INSTALL_MODE" == "remote" ]]; then
     TEMP_DIR=$(mktemp -d)
 fi
 
+# Quick sanity check on the following variables as we rm -rf them later.
+if [[ "$GLIT_DIR" == "/" ]] || [[ "$TEMP_DIR" == "/" ]]; then
+    echo -e "\nInvalid value for GLIT_DIR or TEMP_DIR. Aborting."
+
+    exit 1
+fi
+
 cleanup() {
     echo -e "\n\nInstallation aborted. Cleaning up temporary files..."
     rm -rf "$TEMP_DIR"
