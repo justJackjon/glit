@@ -176,6 +176,19 @@ provide_os_advice() {
     [[ ! -z "$additional_info" ]] && echo -e "$additional_info\n" || :
 }
 
+ask_should_force_install() {
+    echo
+    read -p "Do you want to install \`glit\` anyway? [y/N]: " response
+
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
+        echo -e "\nInstalling \`glit\`..."
+    else
+        echo -e "\nInstallation aborted."
+
+        exit 0
+    fi
+}
+
 ask_should_reinstall() {
     print info "\`glit\` is already installed."
 
@@ -255,6 +268,8 @@ then
 
         exit 1
     fi
+
+    ! $UNATTENDED && $IS_INPUT_INTERACTIVE && ask_should_force_install || :
 fi
 
 # --- Installation ---
