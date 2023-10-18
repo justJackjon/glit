@@ -1,5 +1,26 @@
 #!/usr/bin/env bash
 
+# ------------------------------------------------------------------------------------------
+#
+# NOTE: UNLIKE the main `glit` scripts, the install script prefers brevity over readability.
+#       This is because the install script is intended to be a standalone script that can be
+#       downloaded and run with as few dependencies as possible, meaning we are unable to
+#       modularise it as we have done so with the main `glit` utility.
+#
+#       As such, brevity is preferred to reduce the overall size of the script and allow
+#       developers to quickly understand the general structure and logic of the script, at
+#       an acceptable cost to the readability of deeper implementation details.
+#
+#       For example, this means that shorter conditional statements like these:
+#       [[ "$INSTALL_MODE" == "remote" ]] && TEMP_DIR=$(mktemp -d) || :
+#
+#       Are often preferred over these:
+#       if [[ "$INSTALL_MODE" == "remote" ]]; then
+#           TEMP_DIR=$(mktemp -d)
+#       fi
+#
+# ------------------------------------------------------------------------------------------
+
 # --- Set Script Options ---
 
 # NOTE: Due to exit on error, append '|| :' to add a no-op fallback to commands that might fail where we should continue.
