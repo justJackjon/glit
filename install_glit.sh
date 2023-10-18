@@ -3,7 +3,14 @@
 # Instruct bash to immediately exit if any command has a non-zero exit status
 set -e
 
-# Default values
+# --- Declare Variables ---
+
+# Set global variables
+RED="\e[31m"
+YELLOW="\e[33m"
+GREEN="\e[32m"
+BLUE="\e[34m"
+RESET="\e[0m"
 INSTALL_MODE="remote"
 LOCAL_PATH="$(dirname "$(pwd)")"
 VERSION="latest"
@@ -114,12 +121,6 @@ while (( "$#" )); do
   esac
 done
 
-
-HEAVY_CHECK_MARK="\u2714"
-RED="\e[31m"
-GREEN="\e[32m"
-BLUE="\e[34m"
-RESET="\e[0m"
 # --- Fn Declarations ---
 
 print() {
@@ -131,7 +132,8 @@ print() {
 
     case "$message_type" in
         error) color="$RED"; prefix="Error: ";;
-        success) color="$GREEN"; suffix=" $HEAVY_CHECK_MARK";;
+        warning) color="$YELLOW"; prefix="Warning: ";;
+        success) color="$GREEN"; suffix=" ✔";;
         info) color="$BLUE";;
     esac
 
@@ -271,7 +273,7 @@ if [[ -d "$GLIT_DIR" || -L "$SYMLINK_PATH" ]]; then
         rm -rf "$GLIT_DIR"
         rm -f "$SYMLINK_PATH"
     else
-        print info "Installation aborted."
+        echo -e "\nInstallation aborted."
 
         exit 0
     fi
