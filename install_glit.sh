@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
-# Instruct bash to immediately exit if any command has a non-zero exit status
-set -e
+# --- Set Script Options ---
+
+# NOTE: Due to exit on error, append '|| :' to add a no-op fallback to commands that might fail where we should continue.
+set -o errexit
+set -o nounset
 
 # --- Declare Variables ---
 
