@@ -174,24 +174,26 @@ print_dependencies() {
     done
 }
 
-provide_os_advice() {
-    local os_message=$1
-    local command_prefix=$2
-    local command_name=$3
-    local install_command=$4
-    local extra_command=$5
-    local additional_info=$6
+create_os_advice() {
+    local os_message=$1; shift
+    local command_prefix=$2; shift
+    local command_name=$3; shift
+    local install_command=$4; shift
+    local extra_command=$5; shift
+    local lines_of_additional_info=("$@")
     local deps_space=""
 
     (( ${#MISSING_REQUIRED_PKGS[@]} > 0 && ${#MISSING_RECOMMENDED_PKGS[@]} > 0 )) && deps_space=" " || :
 
-    print info "It seems you're using $os_message. You can install these dependencies using $command_name:\n"
+    print info "It seems you are using $os_message. You may be able to install missing dependencies using $command_name:\n"
 
     [[ ! -z "$extra_command" ]] && echo -e "  \`${command_prefix}${extra_command}\`" || :
 
     echo -e "  \`${command_prefix}${install_command} ${MISSING_REQUIRED_PKGS[*]-}${deps_space}${MISSING_RECOMMENDED_PKGS[*]-}\`\n"
 
-    [[ ! -z "$additional_info" ]] && echo -e "$additional_info\n" || :
+    for line in "${lines_of_additional_info[@]}"; do
+        echo -e "$line"
+    done
 }
 
 ask_should_force_install() {
@@ -283,16 +285,17 @@ then
 
     case $PLATFORM in
         Darwin)
-            provide_os_advice "macOS" "$PREFIX_COMMAND" "Homebrew" "brew install" "" \
-            "If you don't have Homebrew yet, visit https://brew.sh to get started."
+            create_os_advice "macOS" "$prefix_command" "Homebrew" "brew install" "" \
+            "If you don't have Homebrew yet, visit https://brew.sh to get started." \
+            "In a typical brew installation, you must ensure \`/usr/local/bin/\` is before \`/bin/\` in your \$PATH."
             ;;
         Linux)
             if [[ -f /etc/debian_version ]]; then
-                provide_os_advice "a Debian-based system" "$PREFIX_COMMAND" "apt" "apt install" "apt update" ""
+                create_os_advice "a Debian-based system" "$PREFIX_COMMAND" "apt" "apt install" "apt update" ""
             elif [[ -f /etc/redhat-release ]]; then
-                provide_os_advice "a RedHat-based system" "$PREFIX_COMMAND" "yum or dnf" "yum install" "" ""
+                create_os_advice "a RedHat-based system" "$PREFIX_COMMAND" "yum or dnf" "yum install" "" ""
             elif [[ -f /etc/alpine-release ]]; then
-                provide_os_advice "Alpine Linux" "$PREFIX_COMMAND" "apk" "apk add" "" ""
+                create_os_advice "Alpine Linux" "$PREFIX_COMMAND" "apk" "apk add" "" ""
             fi
             ;;
         *)
