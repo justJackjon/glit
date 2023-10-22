@@ -299,11 +299,11 @@ then
             fi
             ;;
         *)
-            echo -e "Please install these dependencies using your system's package manager."
+            echo "Please install these dependencies using your system's package manager."
             ;;
     esac
 
-    ! $IS_ROOT && echo -e "INFO: Only use \`sudo\` when necessary and understand the risks.\n" || :
+    ! $IS_ROOT && echo -e "INFO: Only use \`sudo\` when necessary and when you understand the risks.\n" || :
 
     echo -e "!!!--------------------------------------------"
 
