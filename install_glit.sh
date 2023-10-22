@@ -47,7 +47,7 @@ IS_ROOT=false
 UNATTENDED=false
 IS_INPUT_INTERACTIVE=false
 IS_OUTPUT_INTERACTIVE=false
-OS_NAME="$(uname)"
+PLATFORM="$(uname)"
 MINIMUM_BASH_VERSION=4.2
 INSTALLED_BASH_VERSION="${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}"
 BASH_VERSION_ISSUE=false
@@ -80,7 +80,7 @@ declare -A DEP_TO_PKG_MAP=(
 [[ -t 0 ]] && IS_INPUT_INTERACTIVE=true || :
 [[ -t 1 ]] && IS_OUTPUT_INTERACTIVE=true || :
 [[ ! $IS_ROOT ]] && PREFIX_COMMAND="sudo " || :
-[[ "$OS_NAME" == "Linux" && -f "/etc/debian_version" ]] && DEP_TO_PKG_MAP["tput"]="ncurses-bin" || :
+[[ "$PLATFORM" == "Linux" && -f "/etc/debian_version" ]] && DEP_TO_PKG_MAP["tput"]="ncurses-bin" || :
 [[ "$INSTALL_MODE" == "remote" ]] && TEMP_DIR=$(mktemp -d) || :
 
 cleanup() {
@@ -264,7 +264,7 @@ then
 
     echo -e "\n--------------------------------------------!!!"
 
-    case $OS_NAME in
+    case $PLATFORM in
         Darwin)
             provide_os_advice "macOS" "$PREFIX_COMMAND" "Homebrew" "brew install" "" \
             "If you don't have Homebrew yet, visit https://brew.sh to get started."
