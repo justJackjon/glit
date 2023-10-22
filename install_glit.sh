@@ -93,12 +93,6 @@ cleanup() {
 # NOTE: Only trap on ERR, INT and TERM signals. TEMP_DIR is explicitly removed on successful EXIT.
 trap cleanup ERR INT TERM
 
-# Check Bash version
-if (( $(echo "$INSTALLED_BASH_VERSION < $MINIMUM_BASH_VERSION" | bc -l) )); then
-    BASH_VERSION_ISSUE=true
-    MISSING_REQUIRED_PKGS+=("${DEP_TO_PKG_MAP["bash"]}")
-fi
-
 # Check for missing dependencies
 for DEPENDENCY in "${!DEPENDENCIES[@]}"; do
     command -v "$DEPENDENCY" &> /dev/null && continue
@@ -232,7 +226,30 @@ ask_should_reinstall() {
     fi
 }
 
+is_bash_version_issue() {
+    local installed=()
+    local required=()
+
+    IFS='.' read -ra installed <<< "${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}"
+    IFS='.' read -ra required <<< "$MINIMUM_BASH_VERSION"
+
+    for i in "${!installed[@]}"; do
+        if (( installed[i] < required[i] )); then
+            return 0
+        elif (( installed[i] > required[i] )); then
+            return 1
+        fi
+    done
+
+    return 1
+}
+
 # --- Dependency Checks ---
+
+if is_bash_version_issue; then
+    BASH_VERSION_ISSUE=true
+    MISSING_REQUIRED_PKGS+=("${DEP_TO_PKG_MAP["bash"]}")
+fi
 
 if
     $BASH_VERSION_ISSUE || \
