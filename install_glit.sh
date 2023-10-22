@@ -52,7 +52,7 @@ MINIMUM_BASH_VERSION=4.2
 INSTALLED_BASH_VERSION="${BASH_VERSINFO[0]}.${BASH_VERSINFO[1]}"
 BASH_VERSION_ISSUE=false
 MISSING_REQUIRED_PKGS=()
-MISSING_RECCOMENDED_PKGS=()
+MISSING_RECOMMENDED_PKGS=()
 
 declare -A DEPENDENCIES=(
     ["curl"]="required"
@@ -106,7 +106,7 @@ for DEPENDENCY in "${!DEPENDENCIES[@]}"; do
     if [[ "${DEPENDENCIES[$DEPENDENCY]}" == "required" ]]; then
         MISSING_REQUIRED_PKGS+=("${DEP_TO_PKG_MAP["$DEPENDENCY"]}")
     else
-        MISSING_RECCOMENDED_PKGS+=("${DEP_TO_PKG_MAP["$DEPENDENCY"]}")
+        MISSING_RECOMMENDED_PKGS+=("${DEP_TO_PKG_MAP["$DEPENDENCY"]}")
     fi
 done
 
@@ -189,13 +189,13 @@ provide_os_advice() {
     local additional_info=$6
     local deps_space=""
 
-    (( ${#MISSING_REQUIRED_PKGS[@]} > 0 && ${#MISSING_RECCOMENDED_PKGS[@]} > 0 )) && deps_space=" " || :
+    (( ${#MISSING_REQUIRED_PKGS[@]} > 0 && ${#MISSING_RECOMMENDED_PKGS[@]} > 0 )) && deps_space=" " || :
 
     print info "It seems you're using $os_message. You can install these dependencies using $command_name:\n"
 
     [[ ! -z "$extra_command" ]] && echo -e "  \`${command_prefix}${extra_command}\`" || :
 
-    echo -e "  \`${command_prefix}${install_command} ${MISSING_REQUIRED_PKGS[*]-}${deps_space}${MISSING_RECCOMENDED_PKGS[*]-}\`\n"
+    echo -e "  \`${command_prefix}${install_command} ${MISSING_REQUIRED_PKGS[*]-}${deps_space}${MISSING_RECOMMENDED_PKGS[*]-}\`\n"
 
     [[ ! -z "$additional_info" ]] && echo -e "$additional_info\n" || :
 }
@@ -237,14 +237,14 @@ ask_should_reinstall() {
 if
     $BASH_VERSION_ISSUE || \
     (( ${#MISSING_REQUIRED_PKGS[@]} > 0 )) || \
-    (( ${#MISSING_RECCOMENDED_PKGS[@]} > 0 ))
+    (( ${#MISSING_RECOMMENDED_PKGS[@]} > 0 ))
 then
     SHOULD_ABORT=false
 
     echo -e "\n!!!--------------------------------------------"
 
     if $BASH_VERSION_ISSUE; then
-        print error "Bash verion $INSTALLED_BASH_VERSION.x is installed."
+        print error "Bash version $INSTALLED_BASH_VERSION.x is installed."
         echo
         echo "The minimum version requred by \`glit\` is $MINIMUM_BASH_VERSION.x."
         echo "Please upgrade Bash and try again."
@@ -258,8 +258,8 @@ then
         SHOULD_ABORT=true
     fi
 
-    if (( ${#MISSING_RECCOMENDED_PKGS[@]} > 0 )); then
-        print_dependencies "warning" "\`glit\` will work best if you install the following recommended dependencies:" "${MISSING_RECCOMENDED_PKGS[@]}"
+    if (( ${#MISSING_RECOMMENDED_PKGS[@]} > 0 )); then
+        print_dependencies "warning" "\`glit\` will work best if you install the following recommended dependencies:" "${MISSING_RECOMMENDED_PKGS[@]}"
     fi
 
     echo -e "\n--------------------------------------------!!!"
