@@ -1,4 +1,3 @@
-CONFIG_FILENAME=".glit_config"
 VARS_FOR_PATH_PROCESSING=("VOLUME_DIR" "VOLUME_NAME")
 
 process_paths() {

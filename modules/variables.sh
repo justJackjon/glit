@@ -1,7 +1,35 @@
+string_ternary() {
+    local condition="$1"
+    local true_case="$2"
+    local false_case="$3"
+
+    { "$condition" && echo "$true_case"; } || echo "$false_case"
+}
+
+predicate() {
+    { "$@" && echo "true"; } || echo "false"
+}
+
+is_root() {
+    (( $(id -u) == 0 ))
+}
+
+is_input_interactive() {
+    [[ -t 0 ]]
+}
+
+is_output_interactive() {
+    [[ -t 1 ]]
+}
+
+IS_ROOT=$(predicate is_root)
+IS_INPUT_INTERACTIVE=$(predicate is_input_interactive)
+IS_OUTPUT_INTERACTIVE=$(predicate is_output_interactive)
 VERSION="v0.1-beta.0"
 RELEASE_DATE="October 10, 2023"
 FORCE_ACTION=0
 AUTO_CONFIRM=0
+MINIMUM_BASH_VERSION=4.2
 DEFAULT_VOLUME_NAME="z"
 DEFAULT_EXCLUSIONS=("node_modules/" ".git/" "bin/" "obj/")
 PLATFORM=$(uname)
@@ -15,3 +43,5 @@ REPO_PATH=""
 BASE_PATH=""
 EXCLUSIONS=()
 EXCLUDE_ARGS=()
+CONFIG_FILENAME=".glit_config"
+DEPENDENCIES_CHECKED=false

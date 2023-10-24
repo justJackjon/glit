@@ -13,18 +13,8 @@ EXIT_UNSUPPORTED_PLATFORM=8
 EXIT_VOLUME_NOT_MOUNTED=9
 EXIT_MANDATORY_ARGUMENT_MISSING=10
 EXIT_UNRECOGNIZED_ARGUMENT=11
-
-# --- Dependency Checks ---
-
-REQUIRED_DEPENDENCIES=("rsync" "git" "uname" "realpath")
-
-for cmd in "${REQUIRED_DEPENDENCIES[@]}"; do
-    if ! command -v "$cmd" &>/dev/null; then
-        print error "$cmd is not installed or not in the PATH. Please install $cmd."
-
-        exit $EXIT_MISSING_DEPS
-    fi
-done
+EXIT_CONFIG_CREATION_FAILED=12
+EXIT_CONFIG_MODIFICATION_FAILED=13
 
 # --- Modules ---
 
@@ -33,6 +23,7 @@ DIR="$(cd "$(dirname "$(realpath "${BASH_SOURCE[0]}")")" && pwd)"
 source "$DIR/modules/variables.sh"
 source "$DIR/modules/print_fn.sh"
 source "$DIR/modules/config_parsing.sh"
+source "$DIR/modules/dependency_checking.sh"
 source "$DIR/modules/arg_parsing.sh"
 source "$DIR/modules/utils.sh"
 source "$DIR/modules/sync_fns.sh"
@@ -107,6 +98,7 @@ parse_config
 parse_args_and_options "$@"
 
 determine_platform
+check_dependencies
 create_volume_dir_if_not_exists "$VOLUME_DIR"
 set_repo_path
 generate_exclude_args
