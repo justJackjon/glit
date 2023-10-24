@@ -76,11 +76,15 @@ create_os_advice() {
         echo -e "  \`${command_prefix}${extra_command}\`"
     fi
 
-    echo -e "  \`${command_prefix}${install_command} ${MISSING_REQUIRED_PKGS[*]-}${deps_space}${MISSING_RECOMMENDED_PKGS[*]-}\`"
+    echo -e "  \`${command_prefix}${install_command} ${MISSING_REQUIRED_PKGS[*]-}${deps_space}${MISSING_RECOMMENDED_PKGS[*]-}\`\n"
 
-    for line in "${lines_of_additional_info[@]}"; do
-        echo -e "$line"
-    done
+    if [[ -n "${lines_of_additional_info[*]}" ]]; then
+        for line in "${lines_of_additional_info[@]}"; do
+            echo -e "$line"
+        done
+
+        echo
+    fi
 }
 
 print_os_specific_advice() {

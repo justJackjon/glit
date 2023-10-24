@@ -192,8 +192,10 @@ create_os_advice() {
     echo -e "  \`${command_prefix}${install_command} ${MISSING_REQUIRED_PKGS[*]-}${deps_space}${MISSING_RECOMMENDED_PKGS[*]-}\`\n"
 
     for line in "${lines_of_additional_info[@]}"; do
-        echo -e "$line"
+        [[ -n "$line" ]] && echo -e "$line" || :
     done
+
+    [[ -n "${lines_of_additional_info[*]}" ]] && echo || :
 }
 
 ask_should_force_install() {
