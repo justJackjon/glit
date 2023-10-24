@@ -175,11 +175,11 @@ print_dependencies() {
 }
 
 create_os_advice() {
-    local os_message=$1; shift
-    local command_prefix=$2; shift
-    local command_name=$3; shift
-    local install_command=$4; shift
-    local extra_command=$5; shift
+    local os_message="$1"; shift
+    local command_prefix="$1"; shift
+    local command_name=i"$1"; shift
+    local install_command="$1"; shift
+    local extra_command="$1"; shift
     local lines_of_additional_info=("$@")
     local deps_space=""
 
