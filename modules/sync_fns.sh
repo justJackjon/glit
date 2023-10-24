@@ -44,7 +44,7 @@ generate_changes_output() {
     local changelist_filename_regex='([^\/]+(\.[A-Za-z0-9]+)?)?$'
     local changelist_record_regex="$changelist_prefix_regex$changelist_relative_path_regex$changelist_filename_regex"
 
-    echo -e "$dry_run_changelist" | sed -n -E "s@$changelist_record_regex@${color} ${changes_symbol} ${target_path}\2\4${reset}@p"
+    echo -e "$dry_run_changelist" | sed -n -E "s@$changelist_record_regex@${color} ${changes_symbol} ${target_path}\2\4${RESET}@p"
 }
 
 get_formatted_changelist() {
