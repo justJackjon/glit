@@ -45,3 +45,9 @@ EXCLUSIONS=()
 EXCLUDE_ARGS=()
 CONFIG_FILENAME=".glit_config"
 DEPENDENCIES_CHECKED=false
+
+RED=$(tput setaf 1 2>/dev/null || echo -e "\e[31m")
+GREEN=$(tput setaf 2 2>/dev/null || echo -e "\e[32m")
+YELLOW=$(tput setaf 3 2>/dev/null || echo -e "\e[33m")
+BLUE=$(tput setaf 4 2>/dev/null || echo -e "\e[34m")
+RESET=$(tput sgr0 2>/dev/null || echo -e "\e[0m")

@@ -51,11 +51,6 @@ get_formatted_changelist() {
     local dry_run_changelist="$1"
     local target_path="$2"
 
-    local red=$(tput setaf 1)
-    local green=$(tput setaf 2)
-    local blue=$(tput setaf 4)
-    local reset=$(tput sgr0)
-
     # NOTE: `rsync` Output Prefix Characters:
     # >: The item is being transferred to the remote host (sent).
     # <: The item is being transferred to the local host (received).
@@ -78,13 +73,13 @@ get_formatted_changelist() {
     # .: If a flag isn’t present, a dot (.) will take its place.
 
     local del_prefix_regex="^(\*deleting +)"
-    local deletions=$(generate_changes_output "$dry_run_changelist" "$red" "-" "$target_path" "$del_prefix_regex")
+    local deletions=$(generate_changes_output "$dry_run_changelist" "$RED" "-" "$target_path" "$del_prefix_regex")
 
     local add_prefix_regex="^([>c][fdLDS]\++ +)"
-    local additions=$(generate_changes_output "$dry_run_changelist" "$green" "+" "$target_path" "$add_prefix_regex")
+    local additions=$(generate_changes_output "$dry_run_changelist" "$GREEN" "+" "$target_path" "$add_prefix_regex")
 
     local mod_prefix_regex="^([>c][fdLDS][cstpogu\.]+ +)"
-    local modifications=$(generate_changes_output "$dry_run_changelist" "$blue" "*" "$target_path" "$mod_prefix_regex")
+    local modifications=$(generate_changes_output "$dry_run_changelist" "$BLUE" "*" "$target_path" "$mod_prefix_regex")
 
     local combined_changes=""
     [[ -n "$deletions" ]] && combined_changes+="\nDeletions:\n$deletions\n"

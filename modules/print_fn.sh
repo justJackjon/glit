@@ -1,9 +1,3 @@
-RED="\e[31m"
-YELLOW="\e[33m"
-GREEN="\e[32m"
-BLUE="\e[34m"
-RESET="\e[0m"
-
 HEAVY_CHECK_MARK_SYMBOL="\u2714"
 
 print() {
