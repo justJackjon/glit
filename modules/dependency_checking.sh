@@ -46,8 +46,8 @@ print_bash_version_error() {
 }
 
 print_dependencies() {
-    local message_type=$1; shift
-    local message=$1; shift
+    local message_type="$1"; shift
+    local message="$1"; shift
     local dependencies=("$@")
 
     print "$message_type" "$message\n"
