@@ -44,17 +44,12 @@ generate_changes_output() {
     local changelist_filename_regex='([^\/]+(\.[A-Za-z0-9]+)?)?$'
     local changelist_record_regex="$changelist_prefix_regex$changelist_relative_path_regex$changelist_filename_regex"
 
-    echo -e "$dry_run_changelist" | sed -n -E "s@$changelist_record_regex@${color} ${changes_symbol} ${target_path}\2\4${reset}@p"
+    echo -e "$dry_run_changelist" | sed -n -E "s@$changelist_record_regex@${color} ${changes_symbol} ${target_path}\2\4${RESET}@p"
 }
 
 get_formatted_changelist() {
     local dry_run_changelist="$1"
     local target_path="$2"
-
-    local red=$(tput setaf 1)
-    local green=$(tput setaf 2)
-    local blue=$(tput setaf 4)
-    local reset=$(tput sgr0)
 
     # NOTE: `rsync` Output Prefix Characters:
     # >: The item is being transferred to the remote host (sent).
@@ -78,13 +73,13 @@ get_formatted_changelist() {
     # .: If a flag isn’t present, a dot (.) will take its place.
 
     local del_prefix_regex="^(\*deleting +)"
-    local deletions=$(generate_changes_output "$dry_run_changelist" "$red" "-" "$target_path" "$del_prefix_regex")
+    local deletions=$(generate_changes_output "$dry_run_changelist" "$RED" "-" "$target_path" "$del_prefix_regex")
 
     local add_prefix_regex="^([>c][fdLDS]\++ +)"
-    local additions=$(generate_changes_output "$dry_run_changelist" "$green" "+" "$target_path" "$add_prefix_regex")
+    local additions=$(generate_changes_output "$dry_run_changelist" "$GREEN" "+" "$target_path" "$add_prefix_regex")
 
     local mod_prefix_regex="^([>c][fdLDS][cstpogu\.]+ +)"
-    local modifications=$(generate_changes_output "$dry_run_changelist" "$blue" "*" "$target_path" "$mod_prefix_regex")
+    local modifications=$(generate_changes_output "$dry_run_changelist" "$BLUE" "*" "$target_path" "$mod_prefix_regex")
 
     local combined_changes=""
     [[ -n "$deletions" ]] && combined_changes+="\nDeletions:\n$deletions\n"

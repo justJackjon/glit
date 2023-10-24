@@ -1,11 +1,3 @@
-RED="\e[31m"
-YELLOW="\e[33m"
-GREEN="\e[32m"
-BLUE="\e[34m"
-RESET="\e[0m"
-
-HEAVY_CHECK_MARK_SYMBOL="\u2714"
-
 print() {
     local message_type="$1"
     local message="$2"
@@ -16,7 +8,7 @@ print() {
     case "$message_type" in
         error) color="$RED"; prefix="Error: ";;
         warning) color="$YELLOW"; prefix="Warning: ";;
-        success) color="$GREEN"; suffix=" $HEAVY_CHECK_MARK_SYMBOL";;
+        success) color="$GREEN"; suffix=" ✔";;
         info) color="$BLUE";;
     esac
 
