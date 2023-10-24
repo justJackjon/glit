@@ -32,62 +32,61 @@ source "$DIR/modules/loading_spinner.sh"
 # --- Display Info Fns ---
 
 display_help() {
-    echo ""
+    echo
     echo "Usage: glit <push|pull> [optional-local-path-to-repo] [OPTIONS]"
-    echo ""
+    echo
     echo "Synchronises the provided git repository with a mounted volume such as a networked"
     echo "drive or removable media. If no local path is provided, the root of the closest git"
     echo "repository will be used."
-    echo ""
+    echo
     echo "Options:"
     echo "  -d, --dir       Specify the path to the mounted volume directory. Default is"
     echo "                  '$VOLUME_DIR'. The path is relative to the root of the mounted"
     echo "                  volume."
-    echo ""
+    echo
     echo "  -e, --exclude   Comma-separated list of paths to exclude from syncing. Default"
     echo "                  exclusions are: node_modules/, .git/, bin/, obj/ - exclusion"
     echo "                  paths are relative to the root of the repo."
-    echo ""
+    echo
     echo "  -f, --force     Similar to \`-y\`/\`--yes\`, but instead of outputting the formatted"
     echo "                  change summary, the sync will be performed immediately."
-    echo ""
+    echo
     echo "  -h, --help      Display this help message and exit."
-    echo ""
+    echo
     echo "  -t, --type      Specify the type of mounted volume: 'networked' or 'removable'."
     echo "                  Default is 'networked'."
-    echo ""
+    echo
     echo "  -v, --version   Display version information and exit."
-    echo ""
+    echo
     echo "  -V, --volume    Specify the name of the mounted volume. Default is '$DEFAULT_VOLUME_NAME'."
     echo "                  Ensure the volume is mounted and writable at the following"
     echo "                  locations: For macOS, under \`/Volumes\`. For Linux, use \`/mnt\`"
     echo "                  for networked volumes and \`/media\` for removable volumes."
-    echo ""
+    echo
     echo "  -y, --yes       Automatically answer 'yes' to the sync confirmation prompt. Note"
     echo "                  that this option is ignored if \`-f\`/\`--force\` is also specified."
     echo "                  This is useful if you still want to see the formtted change"
     echo "                  summary, but wish to skip the confirmation prompt. This option is"
     echo "                  slower than \`-f\`/\`--force\` as it requires a dry run to generate"
     echo "                  the change summary."
-    echo ""
+    echo
 
     exit 0
 }
 
 display_version() {
-    echo ""
-    echo -e "\e[1m\`glit\` $VERSION\e[0m"
-    echo ""
+    echo -e "\n\e[1m\`glit\` $VERSION\e[0m"
+    echo
     echo "Release Date: $RELEASE_DATE"
-    echo ""
+    echo
     echo "License: MIT"
     echo -e "Website: \e]8;;https://github.com/justJackjon/glit\ahttps://github.com/justJackjon/glit\e]8;;\a"
     echo -e "Contact: \e]8;;https://github.com/justJackjon/glit/issues\ahttps://github.com/justJackjon/glit/issues\e]8;;\a"
-    echo ""
+    echo
     echo "About:"
     echo "\`glit\` is a user-friendly wrapper around \`rsync\`, designed to assist in synchronising"
     echo "git repositories with mounted volumes such as networked drives or removable media."
-    echo ""
+    echo
 
     exit 0
 }
