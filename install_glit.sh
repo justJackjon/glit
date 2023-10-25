@@ -287,7 +287,7 @@ then
 
     case $PLATFORM in
         Darwin)
-            create_os_advice "macOS" "$prefix_command" "Homebrew" "brew install" "" \
+            create_os_advice "macOS" "$PREFIX_COMMAND" "Homebrew" "brew install" "" \
             "If you don't have Homebrew yet, visit https://brew.sh to get started." \
             "In a typical brew installation, you must ensure \`/usr/local/bin/\` is before \`/bin/\` in your \$PATH."
             ;;
