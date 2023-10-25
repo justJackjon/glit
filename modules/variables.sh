@@ -25,11 +25,11 @@ is_output_interactive() {
 IS_ROOT=$(predicate is_root)
 IS_INPUT_INTERACTIVE=$(predicate is_input_interactive)
 IS_OUTPUT_INTERACTIVE=$(predicate is_output_interactive)
-FORCE_ACTION=0
-AUTO_CONFIRM=0
-VERSION="v0.1-beta.2"
+VERSION="v0.2-beta.0"
 RELEASE_DATE="October 25, 2023"
 MINIMUM_BASH_VERSION=4.2
+FORCE_ACTION=false
+AUTO_CONFIRM=false
 DEFAULT_VOLUME_NAME="z"
 DEFAULT_EXCLUSIONS=("node_modules/" ".git/" "bin/" "obj/")
 PLATFORM=$(uname)

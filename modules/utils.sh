@@ -58,7 +58,7 @@ set_repo_path() {
 prompt_user_and_create_dir() {
     local volume_dir="$1"
 
-    if [[ $AUTO_CONFIRM -eq 0 ]]; then
+    if [[ $AUTO_CONFIRM == false ]]; then
         echo -en "\nWould you like to attempt to create the directory? [y/N]: "
         read -r user_input
 
