@@ -102,7 +102,7 @@ parse_options() {
               shift $TWO_VALUES_CONSUMED
               ;;
           -f|--force)
-              FORCE_ACTION=1
+              FORCE_ACTION=true
 
               shift $ONE_VALUE_CONSUMED
               ;;
@@ -133,7 +133,7 @@ parse_options() {
               shift $TWO_VALUES_CONSUMED
               ;;
           -y|--yes)
-              AUTO_CONFIRM=1
+              AUTO_CONFIRM=true
 
               shift $ONE_VALUE_CONSUMED
               ;;

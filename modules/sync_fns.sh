@@ -109,7 +109,7 @@ generate_change_summary() {
 output_change_summary_and_prompt() {
     local changelist="$1"
 
-    if [[ $AUTO_CONFIRM -eq 1 ]]; then
+    if [[ $AUTO_CONFIRM == true ]]; then
         print info "Applying the following changes:"
         echo -e "$changelist"
         echo ""
@@ -149,7 +149,7 @@ sync_repo() {
 
     IFS=$'\t' read -r source_path target_path < <(get_source_and_target_paths "$local_path")
 
-    if [[ $FORCE_ACTION -ne 1 ]]; then
+    if [[ $FORCE_ACTION == false ]]; then
         local change_summary=$(generate_change_summary "$source_path" "$target_path" "${rsync_common_options[@]}")
 
         if [[ -z "$change_summary" ]]; then

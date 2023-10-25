@@ -146,11 +146,11 @@ sudo bash ./install_glit.sh local
 # Each configuration item corresponds to a matching command line argument. For detailed explanations of these options,
 # please refer to the 'Usage' section in the README.
 
-# Whether to initiate the sync immediately, foregoing the change summary. 0 = No, 1 = Yes.
-FORCE_ACTION=0
+# Whether to initiate the sync immediately, foregoing the change summary.
+FORCE_ACTION=false
 
-# Whether to auto-respond 'yes' to the sync confirmation prompt. 0 = No, 1 = Yes. Ignored if FORCE_ACTION is set to 1.
-AUTO_CONFIRM=0
+# Whether to auto-respond 'yes' to the sync confirmation prompt. Ignored if FORCE_ACTION is set to true.
+AUTO_CONFIRM=false
 
 # Type of mounted volume: 'networked' or 'removable'.
 VOLUME_TYPE="networked"
